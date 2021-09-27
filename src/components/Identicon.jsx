@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import Jazzicon from 'jazzicon';
+import Jazzicon from '@metamask/jazzicon';
 
 const Identicon = ({ account, size, ...rest }) => {
   const ref = useRef();
