@@ -333,29 +333,6 @@ export const SALES_CONTRACT_ABI = [
         type: 'uint256',
       },
       {
-        internalType: 'address payable',
-        name: '_owner',
-        type: 'address',
-      },
-    ],
-    name: 'buyItem',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_nftAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-      {
         internalType: 'address',
         name: '_payToken',
         type: 'address',
@@ -1645,6 +1622,12 @@ export const AUCTION_CONTRACT_ABI = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldOwner',
+        type: 'address',
+      },
+      {
         indexed: true,
         internalType: 'address',
         name: 'nftAddress',
@@ -1988,6 +1971,11 @@ export const AUCTION_CONTRACT_ABI = [
       },
       {
         internalType: 'uint256',
+        name: 'minBid',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
         name: 'reservePrice',
         type: 'uint256',
       },
@@ -2069,6 +2057,11 @@ export const AUCTION_CONTRACT_ABI = [
         type: 'uint256',
       },
       {
+        internalType: 'bool',
+        name: 'minBidReserve',
+        type: 'bool',
+      },
+      {
         internalType: 'uint256',
         name: '_endTimestamp',
         type: 'uint256',
@@ -2123,6 +2116,11 @@ export const AUCTION_CONTRACT_ABI = [
         internalType: 'bool',
         name: '_resulted',
         type: 'bool',
+      },
+      {
+        internalType: 'uint256',
+        name: 'minBid',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',

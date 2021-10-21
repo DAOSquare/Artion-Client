@@ -1,7 +1,9 @@
 import { ethers } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 
-import { Categories } from '../constants/filter.constants.js';
+import { Categories } from 'constants/filter.constants';
+import { IPFSUris } from 'constants/ipfs.constants';
+import MetamaskErrors from 'constants/errors';
 
 export function isAddress(value) {
   try {
@@ -9,6 +11,10 @@ export function isAddress(value) {
   } catch {
     return false;
   }
+}
+
+function isValidCode(code) {
+  return code in MetamaskErrors ? true : false;
 }
 
 export function shortenAddress(address, chars = 4) {
@@ -28,6 +34,27 @@ export const getHigherGWEI = async () => {
   return price;
 };
 
+export const getRandomIPFS = (tokenURI, justURL = false) => {
+  let random = Math.floor(Math.random() * IPFSUris.length);
+
+  if (justURL) {
+    return `${IPFSUris[random]}`;
+  }
+
+  if (
+    tokenURI.includes('gateway.pinata.cloud') ||
+    tokenURI.includes('cloudflare') ||
+    tokenURI.includes('ipfs.io') ||
+    tokenURI.includes('ipfs.infura.io')
+  ) {
+    return `${IPFSUris[random]}${tokenURI.split('ipfs/')[1]}`;
+  } else if (tokenURI.includes('ipfs://')) {
+    return `${IPFSUris[random]}${tokenURI.split('ipfs://')[1]}`;
+  }
+
+  return tokenURI;
+};
+
 export const formatNumber = num => {
   if (isNaN(num) || num === null) return '';
   let parts = num.toString().split('.');
@@ -40,10 +67,32 @@ export const formatCategory = category => {
 };
 
 export const formatError = error => {
-  let startIndex = error.indexOf('message');
-  let finalString = String(error.substr(startIndex + 10).replace(`"}}}'`, ''));
+  if (error.data) {
+    if (isValidCode(error.data.code)) {
+      return MetamaskErrors[String(error.data.code)];
+    } else {
+      return error.data.message;
+    }
+  } else {
+    if (error.message) {
+      let message = error.message;
+      let startIndex = message.indexOf('data');
 
-  return finalString;
+      if (startIndex < 0) {
+        if (isValidCode(error.code)) {
+          return MetamaskErrors[String(error.code)];
+        }
+      }
+
+      let code = String(message.substr(startIndex + 14, 6));
+
+      if (isValidCode(code)) {
+        return MetamaskErrors[code];
+      }
+    }
+  }
+
+  return 'Error!';
 };
 
 const intlFormat = num => {

@@ -11,7 +11,7 @@ import axios from 'axios';
 import WalletConnectActions from 'actions/walletconnect.actions';
 import AuthActions from 'actions/auth.actions';
 import ModalActions from 'actions/modal.actions';
-import { shortenAddress } from 'utils';
+import { shortenAddress, getRandomIPFS } from 'utils';
 import { useApi } from 'api';
 import { NETWORK_LABEL } from 'constants/networks';
 import { ADMIN_ADDRESS } from 'constants/index';
@@ -19,6 +19,7 @@ import WFTMModal from 'components/WFTMModal';
 import ModModal from 'components/ModModal';
 import BanCollectionModal from 'components/BanCollectionModal';
 import BanItemModal from 'components/BanItemModal';
+import BanUserModal from 'components/BanUserModal';
 import BoostCollectionModal from 'components/BoostCollectionModal';
 import ConnectWalletModal from 'components/ConnectWalletModal';
 import Identicon from 'components/Identicon';
@@ -31,6 +32,7 @@ import iconEdit from 'assets/svgs/edit.svg';
 import iconSwap from 'assets/svgs/swap.svg';
 
 import styles from './styles.module.scss';
+import FilterActions from '../../actions/filter.actions';
 
 const Header = ({ border }) => {
   const history = useHistory();
@@ -62,6 +64,8 @@ const Header = ({ border }) => {
     false
   );
   const [banItemModalVisible, setBanItemModalVisible] = useState(false);
+  const [banUserModalVisible, setBanUserModalVisible] = useState(false);
+  const [unbanUserModalVisible, setUnbanUserModalVisible] = useState(false);
   const [
     boostCollectionModalVisible,
     setBoostCollectionModalVisible,
@@ -156,6 +160,25 @@ const Header = ({ border }) => {
         cancelToken: cancelTokenSource.token,
       });
 
+      Promise.all(
+        tokens.map(async token => {
+          if (token.imageURL) {
+            token.imageURL = getRandomIPFS(token.imageURL);
+          }
+
+          if (token.imageURL === '-') {
+            const {
+              data: { image },
+            } = await axios.get(token.tokenURI);
+
+            if (image) {
+              // eslint-disable-next-line require-atomic-updates
+              token.imageURL = getRandomIPFS(token.imageURL);
+            }
+          }
+        })
+      );
+
       setAccounts(accounts);
       setCollections(collections);
       setTokenDetailsLoading(true);
@@ -167,6 +190,10 @@ const Header = ({ border }) => {
     } finally {
       setCancelSource(null);
     }
+  };
+
+  const handleSelectCollection = addr => {
+    dispatch(FilterActions.updateCollectionsFilter([addr]));
   };
 
   const handleSearch = word => {
@@ -251,6 +278,16 @@ const Header = ({ border }) => {
     handleMenuClose();
   };
 
+  const banUser = () => {
+    setBanUserModalVisible(true);
+    handleMenuClose();
+  };
+
+  const unbanUser = () => {
+    setUnbanUserModalVisible(true);
+    handleMenuClose();
+  };
+
   const boostCollection = () => {
     setBoostCollectionModalVisible(true);
     handleMenuClose();
@@ -294,6 +331,7 @@ const Header = ({ border }) => {
         <img src={iconSwap} className={styles.menuIcon} />
         FTM / WFTM Station
       </div>
+
       <div className={styles.menuSeparator} />
       {account?.toLowerCase() === ADMIN_ADDRESS.toLowerCase()
         ? [
@@ -319,10 +357,16 @@ const Header = ({ border }) => {
             <div key={5} className={styles.menuItem} onClick={banItems}>
               Ban Items
             </div>,
-            <div key={6} className={styles.menuItem} onClick={boostCollection}>
+            <div key={6} className={styles.menuItem} onClick={banUser}>
+              Ban a user
+            </div>,
+            <div key={6} className={styles.menuItem} onClick={unbanUser}>
+              Unban a user
+            </div>,
+            <div key={7} className={styles.menuItem} onClick={boostCollection}>
               Boost Collection
             </div>,
-            <div key={7} className={styles.menuSeparator} />,
+            <div key={8} className={styles.menuSeparator} />,
           ]
         : isModerator
         ? [
@@ -332,7 +376,13 @@ const Header = ({ border }) => {
             <div key={2} className={styles.menuItem} onClick={banItems}>
               Ban Items
             </div>,
-            <div key={3} className={styles.menuSeparator} />,
+            <div key={3} className={styles.menuItem} onClick={banUser}>
+              Ban a user
+            </div>,
+            <div key={6} className={styles.menuItem} onClick={unbanUser}>
+              Unban a user
+            </div>,
+            <div key={4} className={styles.menuSeparator} />,
           ]
         : null}
       <div className={styles.signOut} onClick={handleSignOut}>
@@ -362,10 +412,18 @@ const Header = ({ border }) => {
                 <div className={styles.separator} />
                 <div className={styles.resultlist}>
                   {collections.map((collection, idx) => (
-                    <div key={idx} className={styles.result}>
+                    <div
+                      key={idx}
+                      className={styles.result}
+                      onClick={() =>
+                        handleSelectCollection(collection.erc721Address)
+                      }
+                    >
                       <img
                         className={styles.resultimg}
-                        src={`https://cloudflare-ipfs.com/ipfs/${collection.logoImageHash}`}
+                        src={`${getRandomIPFS('', true)}${
+                          collection.logoImageHash
+                        }`}
                       />
                       <div className={styles.resulttitle}>
                         {collection.collectionName}
@@ -571,6 +629,16 @@ const Header = ({ border }) => {
       <BanItemModal
         visible={banItemModalVisible}
         onClose={() => setBanItemModalVisible(false)}
+      />
+      <BanUserModal
+        visible={banUserModalVisible}
+        onClose={() => setBanUserModalVisible(false)}
+        isForBanning={true}
+      />
+      <BanUserModal
+        visible={unbanUserModalVisible}
+        onClose={() => setUnbanUserModalVisible(false)}
+        isForBanning={false}
       />
       <BoostCollectionModal
         visible={boostCollectionModalVisible}

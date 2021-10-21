@@ -129,7 +129,12 @@ const AccountDetails = () => {
     }
     try {
       const { data: isFollowing } = await getFollowing(account, _account);
-      setFollowing(isFollowing);
+
+      if (account === undefined) {
+        setFollowing(false);
+      } else {
+        setFollowing(isFollowing);
+      }
     } catch {
       setFollowing(false);
     }
@@ -251,7 +256,11 @@ const AccountDetails = () => {
     if (me && user && me.address?.toLowerCase() === uid.toLowerCase()) {
       setUser({ ...user, ...me });
     }
-  }, [me, uid]);
+
+    if (account === undefined) {
+      setFollowing(false);
+    }
+  }, [me, uid, account]);
 
   const updateCollections = async () => {
     try {
@@ -444,27 +453,12 @@ const AccountDetails = () => {
       setActivityLoading(true);
       const { data } = await getAccountActivity(uid);
       const _activities = [];
-      data.bids.map(({ owner, ...rest }) =>
-        _activities.push({
-          event: 'Bid',
-          ...rest,
-          quantity: 1,
-          to: owner,
-        })
-      );
-      data.listings.map(listing =>
-        _activities.push({
-          event: 'Listing',
-          ...listing,
-        })
-      );
-      data.offers.map(({ owner, ...rest }) =>
-        _activities.push({
-          event: 'Offer',
-          ...rest,
-          to: owner,
-        })
-      );
+
+      data.bids.map(bActivity => _activities.push(bActivity));
+      data.listings.map(lActivity => _activities.push(lActivity));
+      data.offers.map(oActivity => _activities.push(oActivity));
+      data.sold.map(sActivity => _activities.push(sActivity));
+
       _activities.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
       _activities.map(item => {
         item.token = getTokenByAddress(item.paymentToken);
@@ -588,6 +582,11 @@ const AccountDetails = () => {
 
   const followUser = async () => {
     if (followingInProgress) return;
+
+    if (account === undefined) {
+      toast('error', 'Please connect your wallet!');
+      return;
+    }
 
     setFollowingInProgress(true);
     try {
