@@ -58,7 +58,12 @@ import {
   useBundleSalesContract,
   getSigner,
 } from 'contracts';
-import { shortenAddress, formatNumber, formatError } from 'utils';
+import {
+  shortenAddress,
+  formatNumber,
+  formatError,
+  getRandomIPFS,
+} from 'utils';
 import { Contracts } from 'constants/networks';
 import showToast from 'utils/toast';
 import NFTCard from 'components/NFTCard';
@@ -91,6 +96,7 @@ import iconFacebook from 'assets/imgs/facebook.png';
 import iconTwitter from 'assets/svgs/twitter_blue.svg';
 
 import styles from './styles.module.scss';
+import FilterActions from '../../actions/filter.actions';
 
 const ONE_MIN = 60;
 const ONE_HOUR = ONE_MIN * 60;
@@ -161,6 +167,7 @@ const NFTItem = () => {
     updateAuctionStartTime,
     updateAuctionEndTime,
     updateAuctionReservePrice,
+    withdrawBid,
   } = useAuctionContract();
   const {
     getBundleSalesContract,
@@ -192,7 +199,7 @@ const NFTItem = () => {
   );
 
   const [previewIndex, setPreviewIndex] = useState(0);
-  const [minBidIncrement, setMinBidIncrement] = useState(0);
+  const [minBid, setMinBid] = useState(0);
   const [bundleInfo, setBundleInfo] = useState();
   const [creator, setCreator] = useState();
   const [creatorInfo, setCreatorInfo] = useState();
@@ -223,16 +230,23 @@ const NFTItem = () => {
 
   const [transferring, setTransferring] = useState(false);
   const [listingItem, setListingItem] = useState(false);
+  const [listingConfirming, setListingConfirming] = useState(false);
   const [cancelingListing, setCancelingListing] = useState(false);
+  const [cancelListingConfirming, setCancelListingConfirming] = useState(false);
   const [priceUpdating, setPriceUpdating] = useState(false);
   const [offerPlacing, setOfferPlacing] = useState(false);
+  const [offerConfirming, setOfferConfirming] = useState(false);
   const [offerCanceling, setOfferCanceling] = useState(false);
   const [offerAccepting, setOfferAccepting] = useState(false);
   const [buyingItem, setBuyingItem] = useState(false);
   const [auctionStarting, setAuctionStarting] = useState(false);
+  const [auctionStartConfirming, setAuctionStartConfirming] = useState(false);
   const [auctionUpdating, setAuctionUpdating] = useState(false);
+  const [auctionUpdateConfirming, setAuctionUpdateConfirming] = useState(false);
   const [auctionCanceling, setAuctionCanceling] = useState(false);
+  const [auctionCancelConfirming, setAuctionCancelConfirming] = useState(false);
   const [bidPlacing, setBidPlacing] = useState(false);
+  const [bidWithdrawing, setBidWithdrawing] = useState(false);
   const [resulting, setResulting] = useState(false);
   const [resulted, setResulted] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -431,29 +445,48 @@ const NFTItem = () => {
       } catch {
         setOwner(null);
       }
-
       let data;
       const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
       if (base64regex.test(uri)) {
         const string = atob(uri);
         data = JSON.parse(string);
       } else {
-        new URL(uri);
-        const response = await axios.get(uri);
+        const realUri = getRandomIPFS(uri);
+
+        new URL(realUri);
+        const response = await axios.get(realUri);
         data = response.data;
       }
 
-      data.properties.royalty = parseInt(data.properties.royalty) / 100;
+      if (data[Object.keys(data)[0]].image) {
+        data.image = getRandomIPFS(data[Object.keys(data)[0]].image);
+        data.name = data[Object.keys(data)[0]].name;
+        data.description = data[Object.keys(data)[0]].description;
+      }
+
+      if (data.properties?.royalty) {
+        data.properties.royalty = parseInt(data.properties.royalty) / 100;
+      }
+
+      if (data.image) {
+        data.image = getRandomIPFS(data.image);
+      }
 
       setInfo(data);
-    } catch {
+    } catch (err) {
       try {
         console.warn(
           'Failed to retrieve Item data, fallback to fetching from contract'
         );
         const contract = await getERC721Contract(address);
         const tokenURI = await contract.tokenURI(tokenID);
-        const { data } = await axios.get(tokenURI);
+        const realUri = getRandomIPFS(tokenURI);
+
+        const { data } = await axios.get(realUri);
+
+        if (data.image) {
+          data.image = getRandomIPFS(data.image);
+        }
 
         setInfo(data);
       } catch {
@@ -538,6 +571,12 @@ const NFTItem = () => {
       const _auction = await getAuction(address, tokenID);
       if (_auction.endTime !== 0) {
         const token = getTokenByAddress(_auction.payToken);
+
+        let _minBid = parseFloat(
+          ethers.utils.formatUnits(_auction.minBid, token.decimals)
+        );
+        setMinBid(_minBid);
+
         const reservePrice = parseFloat(
           ethers.utils.formatUnits(_auction.reservePrice, token.decimals)
         );
@@ -550,14 +589,16 @@ const NFTItem = () => {
 
   const getBid = async () => {
     try {
-      const bid = await getHighestBidder(
-        address,
-        tokenID,
-        auction.current.token.address
-      );
+      if (auction.current) {
+        const bid = await getHighestBidder(
+          address,
+          tokenID,
+          auction.current.token.address
+        );
 
-      if (bid.bid !== 0) {
-        setBid(bid);
+        if (bid.bid !== 0) {
+          setBid(bid);
+        }
       }
     } catch (e) {
       console.log(e);
@@ -602,6 +643,9 @@ const NFTItem = () => {
       listings.current = listings.current.sort((a, b) =>
         a.price > b.price ? 1 : -1
       );
+
+      setListingConfirming(false);
+      showToast('success', 'Item listed successfully!');
     }
   };
 
@@ -616,6 +660,9 @@ const NFTItem = () => {
           );
         }
       });
+
+      setListingConfirming(false);
+      showToast('success', 'Price updated successfully!');
     }
   };
 
@@ -624,6 +671,8 @@ const NFTItem = () => {
       listings.current = listings.current.filter(
         listing => listing.owner.toLowerCase() !== owner.toLowerCase()
       );
+      setCancelListingConfirming(false);
+      showToast('success', 'Item unlisted successfully!');
     }
   };
 
@@ -706,6 +755,9 @@ const NFTItem = () => {
         console.log(e);
       }
       tradeHistory.current = [newTradeHistory, ...tradeHistory.current];
+
+      showToast('success', 'You have bought the item!');
+      setBuyingItem(false);
     }
   };
 
@@ -737,6 +789,8 @@ const NFTItem = () => {
         console.log(e);
       }
       offers.current.push(newOffer);
+      setOfferConfirming(false);
+      showToast('success', 'Offer placed successfully!');
     }
   };
 
@@ -746,6 +800,9 @@ const NFTItem = () => {
         offer => offer.creator?.toLowerCase() !== creator?.toLowerCase()
       );
       offers.current = newOffers;
+      setOfferCanceling(false);
+      setOfferConfirming(false);
+      showToast('success', 'You have withdrawn your offer!');
     }
   };
 
@@ -901,7 +958,10 @@ const NFTItem = () => {
 
   const auctionCreatedHandler = (nft, id) => {
     if (eventMatches(nft, id)) {
-      getAuctions();
+      getAuctions().then(() => {
+        setAuctionStartConfirming(false);
+        showToast('success', 'Auction started!');
+      });
     }
   };
 
@@ -909,6 +969,8 @@ const NFTItem = () => {
     if (eventMatches(nft, id)) {
       const endTime = parseFloat(_endTime.toString());
       if (auction.current) {
+        setAuctionUpdateConfirming(false);
+        showToast('success', 'Auction end time updated successfully!');
         const newAuction = { ...auction.current, endTime };
         auction.current = newAuction;
       }
@@ -919,6 +981,8 @@ const NFTItem = () => {
     if (eventMatches(nft, id)) {
       const startTime = parseFloat(_startTime.toString());
       if (auction.current) {
+        setAuctionUpdateConfirming(false);
+        showToast('success', 'Auction start time updated successfully!');
         const newAuction = { ...auction.current, startTime };
         auction.current = newAuction;
       }
@@ -928,6 +992,8 @@ const NFTItem = () => {
   const auctionReservePriceUpdatedHandler = (nft, id, _payToken, _price) => {
     if (eventMatches(nft, id)) {
       if (auction.current) {
+        setAuctionUpdateConfirming(false);
+        showToast('success', 'Auction reserve price updated successfully!');
         const price = ethers.utils.formatUnits(
           _price,
           auction.current.token.decimals
@@ -936,11 +1002,6 @@ const NFTItem = () => {
         auction.current = newAuction;
       }
     }
-  };
-
-  const minBidIncrementUpdatedHandler = _minBidIncrement => {
-    const minBidIncrement = parseFloat(_minBidIncrement.toString());
-    setMinBidIncrement(minBidIncrement);
   };
 
   const bidPlacedHandler = (nft, id, bidder, _bid) => {
@@ -962,6 +1023,8 @@ const NFTItem = () => {
 
   const auctionCancelledHandler = (nft, id) => {
     if (eventMatches(nft, id)) {
+      setAuctionCancelConfirming(false);
+      showToast('success', 'Auction canceled!');
       auction.current = null;
       setBid(null);
     }
@@ -1010,7 +1073,6 @@ const NFTItem = () => {
       'UpdateAuctionReservePrice',
       auctionReservePriceUpdatedHandler
     );
-    auctionContract.on('UpdateMinBidIncrement', minBidIncrementUpdatedHandler);
     auctionContract.on('BidPlaced', bidPlacedHandler);
     auctionContract.on('BidWithdrawn', bidWithdrawnHandler);
     auctionContract.on('AuctionCancelled', auctionCancelledHandler);
@@ -1042,14 +1104,6 @@ const NFTItem = () => {
     bundleSalesContract.off('ItemSold', bundleSoldHandler);
     bundleSalesContract.off('OfferCreated', bundleOfferCreatedHandler);
     bundleSalesContract.off('OfferCanceled', bundleOfferCanceledHandler);
-  };
-
-  const getAuctionConfiguration = async () => {
-    const contract = await getAuctionContract();
-
-    const _minBidIncrement = await contract.minBidIncrement();
-    const minBidIncrement = parseFloat(_minBidIncrement.toString()) / 10 ** 18;
-    setMinBidIncrement(minBidIncrement);
   };
 
   const getCollection = async () => {
@@ -1084,7 +1138,6 @@ const NFTItem = () => {
   useEffect(() => {
     if (address && tokenID) {
       addEventListeners();
-      getAuctionConfiguration();
 
       if (fetchInterval) {
         clearInterval(fetchInterval);
@@ -1152,7 +1205,7 @@ const NFTItem = () => {
   }, [address, tokenID, bundleID]);
 
   useEffect(() => {
-    if (!chainId || !address) {
+    if (!address) {
       setCollectionRoyalty(null);
       return;
     }
@@ -1169,7 +1222,7 @@ const NFTItem = () => {
         }
       })
       .catch(console.log);
-  }, [chainId, address]);
+  }, [address]);
 
   useEffect(() => {
     if (address && tokenID && tokenType.current && filter === 1) {
@@ -1377,11 +1430,11 @@ const NFTItem = () => {
   }, [bundleItems.current, account, chainId]);
 
   useEffect(() => {
-    if (address && chainId) {
+    if (address) {
       addNFTContractEventListeners();
       getCollection();
     }
-  }, [address, chainId]);
+  }, [address]);
 
   const handleApproveSalesContract = async () => {
     setSalesContractApproving(true);
@@ -1472,7 +1525,7 @@ const NFTItem = () => {
     if (bundleID) return;
 
     if (!ethers.utils.isAddress(to)) {
-      showToast('error', 'Invalid Aaddress!');
+      showToast('error', 'Invalid Address!');
       return;
     }
 
@@ -1553,6 +1606,7 @@ const NFTItem = () => {
 
     try {
       setListingItem(true);
+      setListingConfirming(true);
 
       const price = ethers.utils.parseUnits(_price, token.decimals);
       if (bundleID) {
@@ -1586,14 +1640,13 @@ const NFTItem = () => {
           ethers.BigNumber.from(Math.floor(new Date().getTime() / 1000))
         );
         await tx.wait();
-
-        showToast('success', 'Item listed successfully!');
       }
 
       setSellModalVisible(false);
       setListingItem(false);
     } catch (err) {
-      showToast('error', formatError(err.message));
+      showToast('error', formatError(err));
+      setListingConfirming(false);
       console.log(err);
       setListingItem(false);
     }
@@ -1655,6 +1708,7 @@ const NFTItem = () => {
 
     try {
       setPriceUpdating(true);
+      setListingConfirming(true);
 
       const price = ethers.utils.parseUnits(_price, token.decimals);
       if (bundleID) {
@@ -1671,12 +1725,11 @@ const NFTItem = () => {
         await tx.wait();
       }
 
-      showToast('success', 'Price updated successfully!');
-
       setPriceUpdating(false);
       setSellModalVisible(false);
     } catch (e) {
-      showToast('error', formatError(e.message));
+      setListingConfirming(false);
+      showToast('error', formatError(e));
       setPriceUpdating(false);
     }
   };
@@ -1685,6 +1738,7 @@ const NFTItem = () => {
     if (cancelingListing) return;
 
     setCancelingListing(true);
+    setCancelListingConfirming(true);
     try {
       if (bundleID) {
         await cancelBundleListing(bundleID);
@@ -1692,14 +1746,10 @@ const NFTItem = () => {
         showToast('success', 'Bundle unlisted successfully!');
       } else {
         await cancelListing(address, tokenID);
-        listings.current = listings.current.filter(
-          listing => listing.owner.toLowerCase() !== account.toLowerCase()
-        );
-
-        showToast('success', 'Item unlisted successfully!');
       }
     } catch (e) {
-      showToast('error', formatError(e.message));
+      setCancelListingConfirming(false);
+      showToast('error', formatError(e));
       console.log(e);
     }
     setCancelingListing(false);
@@ -1760,9 +1810,6 @@ const NFTItem = () => {
         );
         await tx.wait();
       }
-      setBuyingItem(false);
-
-      showToast('success', 'You have bought the item!');
 
       setOwner(account);
 
@@ -1770,7 +1817,7 @@ const NFTItem = () => {
         _listing => _listing.owner !== listing.owner
       );
     } catch (error) {
-      showToast('error', formatError(error.message));
+      showToast('error', formatError(error));
       setBuyingItem(false);
     }
   };
@@ -1818,16 +1865,13 @@ const NFTItem = () => {
         const tx = await buyBundleERC20(bundleID, token.address);
         await tx.wait();
       }
-      setBuyingItem(false);
-
-      showToast('success', 'You have bought the bundle!');
 
       setOwner(account);
 
       // eslint-disable-next-line require-atomic-updates
       bundleListing.current = null;
     } catch (error) {
-      showToast('error', formatError(error.message));
+      showToast('error', formatError(error));
       setBuyingItem(false);
     }
   };
@@ -1837,6 +1881,7 @@ const NFTItem = () => {
 
     try {
       setOfferPlacing(true);
+      setOfferConfirming(true);
       const price = ethers.utils.parseUnits(_price, token.decimals);
       const deadline = Math.floor(endTime.getTime() / 1000);
       const amount = price.mul(quantity);
@@ -1860,6 +1905,7 @@ const NFTItem = () => {
           }
         );
         setOfferPlacing(false);
+        setOfferConfirming(false);
         return;
       }
 
@@ -1909,11 +1955,10 @@ const NFTItem = () => {
         await tx.wait();
       }
 
-      showToast('success', 'Offer placed successfully!');
-
       setOfferModalVisible(false);
     } catch (e) {
-      showToast('error', formatError(e.message));
+      setOfferConfirming(false);
+      showToast('error', formatError(e));
       console.log(e);
     } finally {
       setOfferPlacing(false);
@@ -1942,7 +1987,7 @@ const NFTItem = () => {
         _offer => _offer.creator !== offer.creator
       );
     } catch (error) {
-      showToast('error', formatError(error.message));
+      showToast('error', formatError(error));
       setOfferAccepting(false);
     }
   };
@@ -1952,6 +1997,7 @@ const NFTItem = () => {
 
     try {
       setOfferCanceling(true);
+      setOfferConfirming(true);
 
       if (bundleID) {
         const tx = await cancelBundleOffer(bundleID);
@@ -1961,20 +2007,24 @@ const NFTItem = () => {
         await tx.wait();
       }
 
-      showToast('success', 'You have withdrawn your offer!');
-
       offerCanceledHandler(account, address, ethers.BigNumber.from(tokenID));
-
-      setOfferCanceling(false);
     } catch (error) {
-      showToast('error', formatError(error.message));
+      setOfferConfirming(false);
+      showToast('error', formatError(error));
       setOfferCanceling(false);
     }
   };
 
-  const handleStartAuction = async (token, _price, _startTime, _endTime) => {
+  const handleStartAuction = async (
+    token,
+    _price,
+    _startTime,
+    _endTime,
+    minBidReserve
+  ) => {
     try {
       setAuctionStarting(true);
+      setAuctionStartConfirming(true);
 
       const price = ethers.utils.parseUnits(_price, token.decimals);
       const startTime = Math.floor(_startTime.getTime() / 1000);
@@ -1986,16 +2036,16 @@ const NFTItem = () => {
         token.address === '' ? ethers.constants.AddressZero : token.address,
         price,
         ethers.BigNumber.from(startTime),
-        ethers.BigNumber.from(endTime)
+        ethers.BigNumber.from(endTime),
+        minBidReserve
       );
       await tx.wait();
-
-      showToast('success', 'Auction started!');
 
       setAuctionStarting(false);
       setAuctionModalVisible(false);
     } catch (error) {
-      showToast('error', formatError(error.message));
+      setAuctionStartConfirming(false);
+      showToast('error', formatError(error));
       setAuctionStarting(false);
     }
   };
@@ -2005,6 +2055,7 @@ const NFTItem = () => {
 
     try {
       setAuctionUpdating(true);
+      setAuctionUpdateConfirming(true);
 
       if (parseFloat(_price) !== auction.current.reservePrice) {
         const price = ethers.utils.parseUnits(_price, token.decimals);
@@ -2013,8 +2064,6 @@ const NFTItem = () => {
           ethers.BigNumber.from(tokenID),
           ethers.BigNumber.from(price)
         );
-
-        showToast('success', 'Auction reserve price updated successfully!');
       }
 
       const startTime = Math.floor(_startTime.getTime() / 1000);
@@ -2024,8 +2073,6 @@ const NFTItem = () => {
           ethers.BigNumber.from(tokenID),
           ethers.BigNumber.from(startTime)
         );
-
-        showToast('success', 'Auction start time updated successfully!');
       }
 
       const endTime = Math.floor(_endTime.getTime() / 1000);
@@ -2035,14 +2082,13 @@ const NFTItem = () => {
           ethers.BigNumber.from(tokenID),
           ethers.BigNumber.from(endTime)
         );
-
-        showToast('success', 'Auction end time updated successfully!');
       }
 
       setAuctionUpdating(false);
       setAuctionModalVisible(false);
     } catch (error) {
-      showToast('error', formatError(error.message));
+      setAuctionUpdateConfirming(false);
+      showToast('error', formatError(error));
       setAuctionUpdating(false);
     }
   };
@@ -2052,12 +2098,11 @@ const NFTItem = () => {
 
     try {
       setAuctionCanceling(true);
+      setAuctionCancelConfirming(true);
       await cancelAuction(address, tokenID);
-      auction.current = null;
-
-      showToast('success', 'Auction canceled!');
     } catch (err) {
-      showToast('error', formatError(err.message));
+      setAuctionCancelConfirming(false);
+      showToast('error', formatError(err));
       console.log(err);
     } finally {
       setAuctionCanceling(false);
@@ -2077,11 +2122,12 @@ const NFTItem = () => {
       await resultAuction(address, tokenID);
       setResulting(false);
       setResulted(true);
+      auction.current = null;
       showToast('success', 'Auction resulted!');
 
       setOwner(bid.bidder);
     } catch (error) {
-      showToast('error', formatError(error.message));
+      showToast('error', formatError(error));
       setResulting(false);
     }
   };
@@ -2139,8 +2185,22 @@ const NFTItem = () => {
       setBidPlacing(false);
       setBidModalVisible(false);
     } catch (error) {
-      showToast('error', formatError(error.message));
+      showToast('error', formatError(error));
       setBidPlacing(false);
+    }
+  };
+
+  const handleWithdrawBid = async () => {
+    if (bidWithdrawing) return;
+
+    try {
+      setBidWithdrawing(true);
+      await withdrawBid(address, ethers.BigNumber.from(tokenID));
+      setBidWithdrawing(false);
+      showToast('success', 'You have withdrawn your bid!');
+    } catch (error) {
+      showToast('error', formatError(error));
+      setBidWithdrawing(false);
     }
   };
 
@@ -2296,11 +2356,6 @@ const NFTItem = () => {
     handleMenuClose();
   };
 
-  const getSiteUrl = url => {
-    if (url.startsWith('http://' || url.startsWith('https://'))) return url;
-    return 'https://' + url;
-  };
-
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -2415,7 +2470,17 @@ const NFTItem = () => {
           <img src={shareIcon} className={styles.itemMenuIcon} />
         </div>
       </div>
-      <div className={styles.itemCategory}>
+      <div
+        className={styles.itemCategory}
+        style={{ cursor: 'pointer' }}
+        onClick={() => {
+          history.push('/explore');
+          collection?.erc721Address &&
+            dispatch(
+              FilterActions.updateCollectionsFilter([collection.erc721Address])
+            );
+        }}
+      >
         {collection?.collectionName || collection?.name || ''}
       </div>
       <div className={styles.itemName}>
@@ -2544,13 +2609,17 @@ const NFTItem = () => {
             <div className={styles.tokenLogo}>
               <img src={bestListing.token?.icon} />
             </div>
-            <div className={styles.currentPrice}>{bestListing.price}</div>
+            <div className={styles.currentPrice}>
+              {formatNumber(bestListing.price)}
+            </div>
             <div className={styles.currentPriceUSD}>
               (
               {prices[bestListing.token?.address] ? (
-                `$${(
-                  bestListing.price * prices[bestListing.token?.address]
-                ).toFixed(3)}`
+                `$${formatNumber(
+                  (
+                    bestListing.price * prices[bestListing.token?.address]
+                  ).toFixed(3)
+                )}`
               ) : (
                 <Skeleton width={80} height={24} />
               )}
@@ -2685,7 +2754,7 @@ const NFTItem = () => {
         <div className={styles.socialLinks}>
           {collection?.siteUrl?.length > 0 && (
             <a
-              href={getSiteUrl(collection?.siteUrl)}
+              href={collection?.siteUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -2695,7 +2764,7 @@ const NFTItem = () => {
           )}
           {collection?.twitterHandle?.length > 0 && (
             <a
-              href={`https://twitter.com/${collection?.twitterHandle}`}
+              href={collection?.twitterHandle}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -2705,7 +2774,7 @@ const NFTItem = () => {
           )}
           {collection?.mediumHandle?.length > 0 && (
             <a
-              href={`https://medium.com/${collection?.mediumHandle}`}
+              href={collection?.mediumHandle}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -2715,7 +2784,7 @@ const NFTItem = () => {
           )}
           {collection?.telegram?.length > 0 && (
             <a
-              href={`https://t.me/${collection?.telegram}`}
+              href={collection?.telegram}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -2725,7 +2794,7 @@ const NFTItem = () => {
           )}
           {collection?.discord?.length > 0 && (
             <a
-              href={`https://discord.gg/${collection?.discord}`}
+              href={collection?.discord}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.socialLink}
@@ -2799,7 +2868,11 @@ const NFTItem = () => {
                   )}
                   onClick={cancelCurrentAuction}
                 >
-                  Cancel Auction
+                  {auctionCancelConfirming ? (
+                    <ClipLoader color="#FFF" size={16} />
+                  ) : (
+                    'Cancel Auction'
+                  )}
                 </div>
               ) : null}
               {!bundleID &&
@@ -2812,9 +2885,17 @@ const NFTItem = () => {
                       (auctionStarting || auctionUpdating || auctionEnded) &&
                         styles.disabled
                     )}
-                    onClick={() => setAuctionModalVisible(true)}
+                    onClick={() => {
+                      !auctionEnded && setAuctionModalVisible(true);
+                    }}
                   >
-                    {auction.current ? 'Update Auction' : 'Start Auction'}
+                    {auctionStartConfirming || auctionUpdateConfirming ? (
+                      <ClipLoader color="#FFF" size={16} />
+                    ) : auction.current ? (
+                      'Update Auction'
+                    ) : (
+                      'Start Auction'
+                    )}
                   </div>
                 )}
               {(!auction.current || auction.current.resulted) && (
@@ -2827,7 +2908,11 @@ const NFTItem = () => {
                       )}
                       onClick={cancelList}
                     >
-                      Cancel Listing
+                      {cancelListingConfirming ? (
+                        <ClipLoader color="#FFF" size={16} />
+                      ) : (
+                        'Cancel Listing'
+                      )}
                     </div>
                   ) : null}
                   <div
@@ -2841,7 +2926,13 @@ const NFTItem = () => {
                         : null
                     }
                   >
-                    {hasListing ? 'Update Listing' : 'Sell'}
+                    {listingConfirming ? (
+                      <ClipLoader color="#FFF" size={16} />
+                    ) : hasListing ? (
+                      'Update Listing'
+                    ) : (
+                      'Sell'
+                    )}
                   </div>
                 </>
               )}
@@ -2862,7 +2953,13 @@ const NFTItem = () => {
                     : () => setOfferModalVisible(true)
                 }
               >
-                {hasMyOffer ? 'Withdraw Offer' : 'Make Offer'}
+                {offerConfirming ? (
+                  <ClipLoader color="#FFF" size={16} />
+                ) : hasMyOffer ? (
+                  'Withdraw Offer'
+                ) : (
+                  'Make Offer'
+                )}
               </TxButton>
             )}
         </div>
@@ -3015,10 +3112,13 @@ const NFTItem = () => {
                             {formatNumber(winningBid)})
                           </>
                         ) : (
-                          'Waiting for result'
+                          'Auction has concluded'
                         )}
                       </div>
-                    ) : bid ? (
+                    ) : (
+                      ''
+                    )}
+                    {bid ? (
                       <div>
                         <div className={styles.bidtitle}>
                           Reserve Price :&nbsp;
@@ -3043,38 +3143,71 @@ const NFTItem = () => {
                       </div>
                     ) : (
                       <div className={styles.bidtitle}>
-                        No bids yet ( Reserve Price :&nbsp;
+                        No bids yet (Reserve Price :&nbsp;
                         <img
                           src={auction.current.token?.icon}
                           className={styles.tokenIcon}
                         />
-                        {formatNumber(auction.current.reservePrice)} )
+                        {formatNumber(auction.current.reservePrice)}
+                        {minBid > 0 &&
+                          ` | First Bid
+                        should match reserve price`}
+                        )
                       </div>
                     )}
                     {!isMine &&
-                      auctionActive() &&
-                      (bid?.bidder?.toLowerCase() === account?.toLowerCase() ? (
-                        <div>(Your bid)</div>
-                      ) : (
-                        <div
-                          className={cx(
-                            styles.placeBid,
-                            bidPlacing && styles.disabled
-                          )}
-                          onClick={() => setBidModalVisible(true)}
-                        >
-                          Place Bid
-                        </div>
-                      ))}
+                      (!auctionActive() &&
+                      bid?.bidder?.toLowerCase() === account?.toLowerCase()
+                        ? now.getTime() / 1000 >=
+                            auction?.current?.endTime + 43200 && (
+                            <div
+                              className={cx(
+                                styles.withdrawBid,
+                                bidWithdrawing && styles.disabled
+                              )}
+                              onClick={() => handleWithdrawBid()}
+                            >
+                              {bidWithdrawing
+                                ? 'Withdrawing Bid...'
+                                : 'Withdraw Bid'}
+                            </div>
+                          )
+                        : // )
+                          !isMine &&
+                          bid?.bidder?.toLowerCase() !==
+                            account?.toLowerCase() &&
+                          auctionActive() && (
+                            <div
+                              className={cx(
+                                styles.placeBid,
+                                bidPlacing && styles.disabled
+                              )}
+                              onClick={() => setBidModalVisible(true)}
+                            >
+                              Place Bid
+                            </div>
+                          ))}
                     {isMine && auctionEnded && !auction.current.resulted && (
                       <div
                         className={cx(
                           styles.placeBid,
                           resulting && styles.disabled
                         )}
-                        onClick={handleResultAuction}
+                        onClick={
+                          bid === null ||
+                          bid?.bid < auction.current?.reservePrice
+                            ? cancelCurrentAuction
+                            : handleResultAuction
+                        }
                       >
-                        Accept highest bid
+                        {auctionCancelConfirming ? (
+                          <ClipLoader color="#FFF" size={16} />
+                        ) : bid === null ||
+                          bid?.bid < auction.current.reservePrice ? (
+                          'Reserve Price not met. Cancel Auction'
+                        ) : (
+                          'Accept highest bid'
+                        )}
                       </div>
                     )}
                   </div>
@@ -3644,9 +3777,10 @@ const NFTItem = () => {
         visible={bidModalVisible}
         onClose={() => setBidModalVisible(false)}
         onPlaceBid={handlePlaceBid}
-        minBidAmount={(bid?.bid || 0) + minBidIncrement}
+        minBidAmount={bid?.bid ? bid?.bid : minBid}
         confirming={bidPlacing}
         token={auction.current?.token}
+        firstBid={bid?.bid ? false : minBid > 0 ? true : false}
       />
       <OwnersModal
         visible={ownersModalVisible}

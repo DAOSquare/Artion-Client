@@ -99,7 +99,9 @@ const PaintBoard = () => {
     fetchMintableCollections,
     getNonce,
     addUnlockableContent,
+    checkBan,
   } = useApi();
+
   const { registerRoyalty } = useSalesContract();
   const { loadContract } = useContract();
 
@@ -231,6 +233,13 @@ const PaintBoard = () => {
       return;
     }
 
+    let isBanned = await checkBan(account, authToken);
+
+    if (isBanned) {
+      showToast('error', 'You are banned from minting');
+      return;
+    }
+
     setLastMintedTnxId('');
     // show stepper
     setIsMinting(true);
@@ -351,7 +360,7 @@ const PaintBoard = () => {
           history.push(`/explore/${nft}/${mintedTkId.toNumber()}`);
         }, 1000 + Math.random() * 2000);
       } catch (error) {
-        showToast('error', formatError(error.message));
+        showToast('error', formatError(error));
       }
     } catch (error) {
       showToast('error', error.message);

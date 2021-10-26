@@ -10,9 +10,14 @@ export const useApi = () => {
 
   const apiUrl = 'http://47.241.100.81:5001';
 
+  // eslint-disable-next-line no-undef
+  // const apiUrl = process.env.REACT_APP_API_URI;
   const storageUrl = isMainnet
     ? 'https://storage.artion.io'
     : 'https://storage.testnet.artion.io';
+
+  // const tokenURL = 'https://fetch-tokens.vercel.app/api';
+  // const tokenURL = 'https://api.artion.io/nftitems/fetchTokens';
 
   const getNonce = async (address, authToken) => {
     const res = await axios({
@@ -247,7 +252,7 @@ export const useApi = () => {
     data.sortby = sortBy;
     const res = await axios({
       method: 'post',
-      url: `https://fetch-tokens.vercel.app/api`,
+      url: `${apiUrl}/nftitems/fetchTokens`,
       data: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
@@ -450,6 +455,51 @@ export const useApi = () => {
     const res = await axios({
       method: 'post',
       url: `${apiUrl}/ban/unbanCollection`,
+      data: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    return res.data;
+  };
+
+  const checkBan = async (address, authToken) => {
+    const data = { address };
+    const res = await axios({
+      method: 'get',
+      url: `${apiUrl}/ban/banUser`,
+      data: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    let check = res.data;
+
+    return check.status == 'success' ? true : false;
+  };
+
+  const banUser = async (address, authToken, signature, signatureAddress) => {
+    const data = { address, signature, signatureAddress };
+    const res = await axios({
+      method: 'post',
+      url: `${apiUrl}/ban/banUser`,
+      data: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    return res.data;
+  };
+
+  const unbanUser = async (address, authToken, signature, signatureAddress) => {
+    const data = { address, signature, signatureAddress };
+    const res = await axios({
+      method: 'post',
+      url: `${apiUrl}/ban/removeBan`,
       data: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
@@ -808,6 +858,9 @@ export const useApi = () => {
     banCollection,
     unbanCollection,
     banItems,
+    banUser,
+    unbanUser,
+    checkBan,
     boostCollection,
     createBundle,
     deleteBundle,

@@ -17,7 +17,7 @@ import ReactPlayer from 'react-player';
 
 import SuspenseImg from 'components/SuspenseImg';
 import BootstrapTooltip from 'components/BootstrapTooltip';
-import { formatNumber } from 'utils';
+import { formatNumber, getRandomIPFS } from 'utils';
 import { useApi } from 'api';
 import { useAuctionContract } from 'contracts';
 import useTokens from 'hooks/useTokens';
@@ -56,7 +56,19 @@ const BaseCard = ({ item, loading, style, create, onCreate, onLike }) => {
   const getTokenURI = async tokenURI => {
     setFetching(true);
     try {
+      tokenURI = getRandomIPFS(tokenURI);
+
       const { data } = await axios.get(tokenURI);
+
+      if (data[Object.keys(data)[0]].image) {
+        data.image = getRandomIPFS(data[Object.keys(data)[0]].image);
+        data.name = data[Object.keys(data)[0]].name;
+      }
+
+      if (data.properties && data.properties.image) {
+        data.image = getRandomIPFS(data.properties.image.description);
+      }
+
       setInfo(data);
     } catch {
       setInfo(null);
@@ -81,17 +93,25 @@ const BaseCard = ({ item, loading, style, create, onCreate, onLike }) => {
   };
 
   useEffect(() => {
-    if (item && !item.name) {
-      getTokenURI(item.tokenURI);
-    }
-    if (item) {
-      setLiked(item.liked);
-      if (item.items) {
-        setAuction(null);
-      } else {
-        getCurrentAuction();
+    async function fetchMyAPI() {
+      if (item && !item.name) {
+        await getTokenURI(item.tokenURI);
+      }
+      if (item) {
+        if (item.imageURL) {
+          // eslint-disable-next-line require-atomic-updates
+          item.imageURL = getRandomIPFS(item.imageURL);
+        }
+
+        setLiked(item.liked);
+        if (item.items) {
+          setAuction(null);
+        } else {
+          getCurrentAuction();
+        }
       }
     }
+    fetchMyAPI();
   }, [item]);
 
   useEffect(() => {
