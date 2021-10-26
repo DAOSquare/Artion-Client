@@ -109,6 +109,12 @@ const LandingPage = () => {
               Artion is an NFT marketplace built on Fantom. Create and trade
               NFTs instantly with low network costs.
             </div>
+            <div className={styles.subtitle}>
+              <strong>
+                Warning: This is a beta version. Use at your own caution.
+              </strong>
+            </div>
+
             <Link to="/explore" className={styles.exploreButton}>
               Explore
             </Link>
@@ -117,9 +123,25 @@ const LandingPage = () => {
             <div className={styles.cardMedia}>
               <img src={umansExample} />
             </div>
-            <div className={styles.cardInfo}>
-              <div className={styles.cardCategory}>Ancestral Uman</div>
-              <div className={styles.cardName}>{'World of Umans'}</div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <div className={styles.cardInfo}>
+                <div className={styles.cardCategory}>Shamanka: The Healer</div>
+                <div className={styles.cardName}>{'World of Umans'}</div>
+              </div>
+              <Link
+                to="/explore/0x972dd206a7c2d4ae46db1db700bc79de1bc59960/0"
+                className={styles.exploreButton}
+                style={{ margin: '0 24px' }}
+              >
+                Go to auction
+              </Link>
             </div>
           </div>
         </div>
@@ -172,7 +194,14 @@ const LandingPage = () => {
           >
             Terms of Service
           </a>
-          <img src={fantomLogo} alt="fantom-logo" className={styles.logo} />
+          <a
+            href="https://fantom.foundation/"
+            target="_blank"
+            rel="noopener noreferrer
+            noreferrer"
+          >
+            <img src={fantomLogo} alt="fantom-logo" className={styles.logo} />
+          </a>
         </div>
       </div>
     </div>

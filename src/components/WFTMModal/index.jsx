@@ -7,6 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import Skeleton from 'react-loading-skeleton';
 import SwapVertIcon from '@material-ui/icons/SwapVert';
 import toast from 'react-hot-toast';
+import InputError from '../InputError';
 
 import { useWFTMContract } from 'contracts';
 import PriceInput from 'components/PriceInput';
@@ -28,11 +29,14 @@ const WFTMModal = ({ visible, onClose }) => {
   const [confirming, setConfirming] = useState(false);
   const [wrap, setWrap] = useState(true);
   const [amount, setAmount] = useState('');
+  const [inputError, setInputError] = useState(null);
 
   const { price } = useSelector(state => state.Price);
 
-  const getBalances = async () => {
-    setLoading(true);
+  const getBalances = async (overrideLoading = false) => {
+    if (!overrideLoading) {
+      setLoading(true);
+    }
 
     await window.ethereum.enable();
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -41,10 +45,45 @@ const WFTMModal = ({ visible, onClose }) => {
       await provider.getBalance(account),
       await getWFTMBalance(account),
     ]);
+
     setBalance(parseFloat(ftmBal.toString()) / 10 ** 18);
     setWrappedBalance(parseFloat(wftmBal.toString()) / 10 ** 18);
 
-    setLoading(false);
+    if (!overrideLoading) {
+      setLoading(false);
+    }
+
+    return [
+      parseFloat(ftmBal.toString()) / 10 ** 18,
+      parseFloat(wftmBal.toString()) / 10 ** 18,
+    ];
+  };
+
+  const pollBalanceChange = async (initialFtmBal, initialWftmBal) => {
+    setLoading(true);
+    let timeout;
+    let updated = false;
+
+    await new Promise(
+      resolve =>
+        (timeout = setTimeout(
+          () =>
+            getBalances(true).then(([ftmBal, wftmBal]) => {
+              if (ftmBal !== initialFtmBal || wftmBal !== initialWftmBal) {
+                updated = true;
+              }
+              resolve();
+            }),
+          200
+        ))
+    );
+
+    if (!updated) {
+      await pollBalanceChange(initialFtmBal, initialWftmBal);
+    }
+
+    clearTimeout(timeout);
+    return setLoading(false);
   };
 
   useEffect(() => {
@@ -85,6 +124,7 @@ const WFTMModal = ({ visible, onClose }) => {
       if (wrap) {
         const tx = await wrapFTM(price, account);
         await tx.wait();
+        await pollBalanceChange(balance, wrappedBalance);
         const toastId = showToast(
           'success',
           'Wrapped FTM successfully!',
@@ -97,6 +137,7 @@ const WFTMModal = ({ visible, onClose }) => {
       } else {
         const tx = await unwrapFTM(price);
         await tx.wait();
+        await pollBalanceChange(balance, wrappedBalance);
         const toastId = showToast(
           'success',
           'Unwrap W-FTM successfully!',
@@ -109,7 +150,7 @@ const WFTMModal = ({ visible, onClose }) => {
       }
       setAmount('');
     } catch (err) {
-      showToast('error', formatError(err.message));
+      showToast('error', formatError(err));
       console.log(err);
     } finally {
       setConfirming(false);
@@ -125,6 +166,7 @@ const WFTMModal = ({ visible, onClose }) => {
       submitDisabled={
         confirming ||
         loading ||
+        inputError ||
         amount.length === 0 ||
         parseFloat(amount) === 0 ||
         parseFloat(amount) > (wrap ? balance - 0.01 : wrappedBalance)
@@ -169,6 +211,7 @@ const WFTMModal = ({ visible, onClose }) => {
                 decimals={18}
                 value={'' + amount}
                 onChange={setAmount}
+                onInputError={setInputError}
               />
               <div className={styles.usdVal}>
                 ${formatNumber(((parseFloat(amount) || 0) * price).toFixed(2))}
@@ -202,6 +245,7 @@ const WFTMModal = ({ visible, onClose }) => {
                 decimals={18}
                 value={'' + amount}
                 onChange={setAmount}
+                onInputError={setInputError}
               />
               <div className={styles.usdVal}>
                 ${formatNumber(((parseFloat(amount) || 0) * price).toFixed(2))}
@@ -210,6 +254,7 @@ const WFTMModal = ({ visible, onClose }) => {
           </div>
         </div>
       </div>
+      <InputError text={inputError} />
     </Modal>
   );
 };
