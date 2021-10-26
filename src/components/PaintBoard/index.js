@@ -217,8 +217,8 @@ const PaintBoard = () => {
       showToast('info', 'Connect your wallet first');
       return;
     }
-    if (chainId !== ChainId.FANTOM && chainId !== ChainId.FANTOM_TESTNET) {
-      showToast('info', 'You are not connected to Fantom Opera Network');
+    if (chainId !== ChainId.XDAI) {
+      showToast('info', 'You are not connected to xDai network');
       return;
     }
     const balance = await WalletUtils.checkBalance(account);

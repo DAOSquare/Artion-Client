@@ -9,7 +9,7 @@ import Modal from '../Modal';
 import styles from './styles.module.scss';
 
 // eslint-disable-next-line no-undef
-const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
+// const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
 
 const Option = ({ onClick = null, header, icon, active = false }) => {
   return (
@@ -82,8 +82,8 @@ const ConnectWalletModal = ({ visible, onClose }) => {
       return (
         <div>
           <div className={styles.text}>
-            Please connect to the{' '}
-            {isMainnet ? 'Fantom Opera' : 'Fantom Testnet'}.
+            Please connect to the xDAI.
+            {/* {isMainnet ? 'Fantom Opera' : 'Fantom Testnet'}. */}
           </div>
           <div className={styles.switchBtn} onClick={deactivate}>
             Disconnect

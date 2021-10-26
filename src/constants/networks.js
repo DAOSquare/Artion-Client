@@ -41,4 +41,13 @@ export const Contracts = {
     artFactory: '0x56059938534AD39616b0b57B7F3c3FE074C3ab39', //FantomArtFactory
     privateArtFactory: '0xC6A8025f10F87620A165E9A53844eBa6217D5406', //FantomArtFactoryPrivate
   },
+  [ChainId.XDAI]: {
+    auction: '0xE063A2234806cb3524B676b5D70a166e107EC0d7',
+    sales: '0x5422211B89696b2275f8AF3A05Cf33715dc0225D', // FantomMarketPlace
+    bundleSales: '0x8C5d6E5489A017e81f33dc15d58ACbAe0aAb97F9',
+    factory: '0xA5fC8e841CCF2a0B7663640cFe63158d27084756', //FantomNFTFactory
+    privateFactory: '0x42395763A088091E1eC1909049d3f52957feA38A', //FantomNFTFactoryPrivate
+    artFactory: '0x363FEc9616a55C913e209C2e2ff868E5278D229d', //FantomArtFactory
+    privateArtFactory: '0x23bc98E5CBF5ec1e957536A77269EDEd1D56b4C9', //FantomArtFactoryPrivate
+  },
 };

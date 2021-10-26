@@ -23,13 +23,7 @@ export const network = new NetworkConnector({
 });
 
 export const injected = new InjectedConnector({
-  supportedChainIds: isMainnet
-    ? [
-        250, // fantom
-      ]
-    : [
-        4002, // fantom testnet
-      ],
+  supportedChainIds: [100], // xDAI
 });
 
 export const walletlink = new WalletLinkConnector({

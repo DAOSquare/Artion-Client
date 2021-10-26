@@ -8,9 +8,7 @@ export const useApi = () => {
     ? 'https://ftmscan.com'
     : 'https://testnet.ftmscan.com';
 
-  const apiUrl = isMainnet
-    ? 'https://api.artion.io'
-    : 'https://api.testnet.artion.io';
+  const apiUrl = 'http://47.241.100.81:5001';
 
   const storageUrl = isMainnet
     ? 'https://storage.artion.io'
