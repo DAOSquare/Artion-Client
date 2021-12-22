@@ -29,7 +29,7 @@ import iconUser from 'assets/svgs/user.svg';
 import iconNotification from 'assets/svgs/notification.svg';
 // import iconAdd from 'assets/svgs/add.svg';
 import iconEdit from 'assets/svgs/edit.svg';
-import iconSwap from 'assets/svgs/swap.svg';
+// import iconSwap from 'assets/svgs/swap.svg';
 
 import styles from './styles.module.scss';
 import FilterActions from '../../actions/filter.actions';
@@ -239,10 +239,10 @@ const Header = ({ border }) => {
     handleMenuClose();
   };
 
-  const openWrapStation = () => {
-    dispatch(ModalActions.showWFTMModal());
-    handleMenuClose();
-  };
+  // const openWrapStation = () => {
+  //   dispatch(ModalActions.showWFTMModal());
+  //   handleMenuClose();
+  // };
 
   const addMod = () => {
     setIsAdding(true);
