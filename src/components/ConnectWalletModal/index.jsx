@@ -8,9 +8,6 @@ import usePrevious from 'hooks/usePrevious';
 import Modal from '../Modal';
 import styles from './styles.module.scss';
 
-// eslint-disable-next-line no-undef
-// const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
-
 const Option = ({ onClick = null, header, icon, active = false }) => {
   return (
     <div
@@ -81,10 +78,7 @@ const ConnectWalletModal = ({ visible, onClose }) => {
     if (error instanceof UnsupportedChainIdError) {
       return (
         <div>
-          <div className={styles.text}>
-            Please connect to the xDAI.
-            {/* {isMainnet ? 'Fantom Opera' : 'Fantom Testnet'}. */}
-          </div>
+          <div className={styles.text}>Please connect to XDAI.</div>
           <div className={styles.switchBtn} onClick={deactivate}>
             Disconnect
           </div>

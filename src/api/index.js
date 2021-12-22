@@ -4,11 +4,10 @@ import axios from 'axios';
 const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
 
 export const useApi = () => {
-  const explorerUrl = isMainnet
-    ? 'https://ftmscan.com'
-    : 'https://testnet.ftmscan.com';
+  const explorerUrl = 'https://blockscout.com/xdai/mainnet/';
 
-  const apiUrl = 'http://47.241.100.81:5001';
+  // const apiUrl = 'http://localhost:5001';
+  const apiUrl = 'http://13.231.161.13:5001';
 
   // eslint-disable-next-line no-undef
   // const apiUrl = process.env.REACT_APP_API_URI;

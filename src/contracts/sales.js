@@ -7,8 +7,7 @@ import useContract from 'hooks/useContract';
 import { SALES_CONTRACT_ABI } from './abi';
 
 // eslint-disable-next-line no-undef
-const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
-const CHAIN = isMainnet ? ChainId.FANTOM : ChainId.FANTOM_TESTNET;
+const CHAIN = ChainId.XDAI;
 
 export const useSalesContract = () => {
   const { getContract } = useContract();
@@ -37,6 +36,7 @@ export const useSalesContract = () => {
     const contract = await getSalesContract();
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract['buyItem(address,uint256,address,address)'](
@@ -70,6 +70,7 @@ export const useSalesContract = () => {
 
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.listItem(
@@ -94,6 +95,7 @@ export const useSalesContract = () => {
 
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.updateListing(
@@ -117,6 +119,7 @@ export const useSalesContract = () => {
 
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.createOffer(
@@ -143,6 +146,7 @@ export const useSalesContract = () => {
     const contract = await getSalesContract();
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.acceptOffer(nftAddress, tokenId, creator, options);
@@ -152,6 +156,7 @@ export const useSalesContract = () => {
     const contract = await getSalesContract();
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.registerRoyalty(

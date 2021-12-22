@@ -5,9 +5,7 @@ import iconWFTM from 'assets/imgs/wftm.png';
 import iconUSDT from 'assets/imgs/usdt.png';
 import iconUSDC from 'assets/imgs/usdc.png';
 import iconDAI from 'assets/imgs/dai.png';
-
-// eslint-disable-next-line no-undef
-const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
+import iconXDAI from 'assets/imgs/xdai.svg';
 
 const Tokens = {
   [ChainId.FANTOM]: [
@@ -63,10 +61,26 @@ const Tokens = {
       icon: iconWFTM,
     },
   ],
+  [ChainId.XDAI]: [
+    {
+      address: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+      name: 'Wrapped XDAI',
+      symbol: 'WXDAI',
+      decimals: 18,
+      icon: iconXDAI,
+    },
+    {
+      address: '0x0e523901De365a9145c9822943F313b899540dF5',
+      name: 'Another Test Token',
+      symbol: 'ATT',
+      decimals: 18,
+      icon: iconDAI,
+    },
+  ],
 };
 
 export default function useTokens() {
-  const chain = isMainnet ? ChainId.FANTOM : ChainId.FANTOM_TESTNET;
+  const chain = ChainId.XDAI;
 
   const tokens = Tokens[chain];
 

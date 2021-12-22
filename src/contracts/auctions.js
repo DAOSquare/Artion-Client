@@ -7,8 +7,7 @@ import useContract from 'hooks/useContract';
 import { AUCTION_CONTRACT_ABI } from './abi';
 
 // eslint-disable-next-line no-undef
-const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
-const CHAIN = isMainnet ? ChainId.FANTOM : ChainId.FANTOM_TESTNET;
+const CHAIN = ChainId.XDAI;
 
 export const useAuctionContract = () => {
   const { getContract } = useContract();
@@ -18,29 +17,34 @@ export const useAuctionContract = () => {
 
   const getAuction = async (nftAddress, tokenId) => {
     const contract = await getAuctionContract();
-    const res = await contract.getAuction(nftAddress, tokenId);
-    const owner = res[0];
-    const payToken = res[1];
-    const reservePrice = res[2];
-    const startTime = parseFloat(res[3].toString());
-    const endTime = parseFloat(res[4].toString());
-    const resulted = res[5];
-    const minBid = res[6];
-    return {
-      owner,
-      payToken,
-      reservePrice,
-      startTime,
-      endTime,
-      resulted,
-      minBid,
-    };
+    try {
+      const res = await contract.getAuction(nftAddress, tokenId);
+      const owner = res[0];
+      const payToken = res[1];
+      const reservePrice = res[2];
+      const startTime = parseFloat(res[3].toString());
+      const endTime = parseFloat(res[4].toString());
+      const resulted = res[5];
+      const minBid = res[6];
+      return {
+        owner,
+        payToken,
+        reservePrice,
+        startTime,
+        endTime,
+        resulted,
+        minBid,
+      };
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const cancelAuction = async (nftAddress, tokenId) => {
     const contract = await getAuctionContract();
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.cancelAuction(nftAddress, tokenId, options);
@@ -58,6 +62,7 @@ export const useAuctionContract = () => {
     const contract = await getAuctionContract();
     const options = {
       gasPrice: getHigherGWEI(),
+      gasLimit: 2000000,
     };
 
     return await contract.createAuction(

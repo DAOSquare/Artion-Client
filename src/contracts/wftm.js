@@ -11,8 +11,8 @@ const WFTM_ADDRESS = {
 };
 
 // eslint-disable-next-line no-undef
-const isMainnet = process.env.REACT_APP_ENV === 'MAINNET';
-const CHAIN = isMainnet ? ChainId.FANTOM : ChainId.FANTOM_TESTNET;
+const CHAIN = ChainId.XDAI;
+
 export const useWFTMContract = () => {
   const { getContract } = useContract();
 
