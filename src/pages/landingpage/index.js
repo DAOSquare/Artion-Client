@@ -33,7 +33,7 @@ const cards = [
     icon: card2,
     title: 'Super Fast',
     description:
-      'Since Artion runs on the Fantom Opera Network, transactions are usually confirmed within 1-2 seconds.',
+      'Since NFTSquare runs on the XDAI Network, transactions are usually confirmed within 1-2 seconds.',
     path: '/',
   },
   {
@@ -47,7 +47,7 @@ const cards = [
     icon: card4,
     title: 'Zero Platform Fees',
     description:
-      'Trade NFTs via auction or direct offer without any fees taken by Artion.',
+      'Trade NFTs via auction or direct offer without any fees taken by NFTSquare.',
     path: '/explore',
   },
 ];
@@ -104,9 +104,9 @@ const LandingPage = () => {
           <div className={styles.mainLeft}>
             <div
               className={styles.title}
-            >{`Trade without platform fees on Artion`}</div>
+            >{`Trade without platform fees on NFTSquare`}</div>
             <div className={styles.subtitle}>
-              Artion is an NFT marketplace built on Fantom. Create and trade
+              NFTSquare is an NFT marketplace built on XDAI. Create and trade
               NFTs instantly with low network costs.
             </div>
             <div className={styles.subtitle}>
@@ -136,7 +136,7 @@ const LandingPage = () => {
                 <div className={styles.cardName}>{'World of Umans'}</div>
               </div>
               <Link
-                to="/explore/0x972dd206a7c2d4ae46db1db700bc79de1bc59960/0"
+                to="/explore/0xb2289c00a7ab343ff820ff560af08efea1bf4220/55"
                 className={styles.exploreButton}
                 style={{ margin: '0 24px' }}
               >
@@ -147,7 +147,7 @@ const LandingPage = () => {
         </div>
         <div className={styles.about}>
           <div className={styles.aboutInner}>
-            <div className={styles.aboutTitle}>Why Artion</div>
+            <div className={styles.aboutTitle}>Why NFTSquare</div>
             <div className={styles.aboutCards}>
               {cards.map((card, key) =>
                 renderAboutCard(
@@ -194,14 +194,14 @@ const LandingPage = () => {
           >
             Terms of Service
           </a>
-          <a
+          {/* <a
             href="https://fantom.foundation/"
             target="_blank"
             rel="noopener noreferrer
             noreferrer"
           >
             <img src={fantomLogo} alt="fantom-logo" className={styles.logo} />
-          </a>
+          </a> */}
         </div>
       </div>
     </div>

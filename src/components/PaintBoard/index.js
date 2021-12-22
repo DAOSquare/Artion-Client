@@ -256,7 +256,7 @@ const PaintBoard = () => {
       const { data: nonce } = await getNonce(account, authToken);
       try {
         const signer = await getSigner();
-        const msg = `Approve Signature on Artion.io with nonce ${nonce}`;
+        const msg = `Approve Signature on NFTSquare with nonce ${nonce}`;
         signature = await signer.signMessage(msg);
         addr = ethers.utils.verifyMessage(msg, signature);
       } catch (err) {
@@ -459,7 +459,7 @@ const PaintBoard = () => {
                 <input
                   className={styles.formInput}
                   maxLength={40}
-                  placeholder="Name"
+                  placeholder="Name *"
                   value={name}
                   onChange={e => setName(e.target.value)}
                   disabled={isMinting}
@@ -604,7 +604,7 @@ const PaintBoard = () => {
             {fee !== null ? (
               <>
                 <InfoIcon />
-                &nbsp;{fee} FTM are charged to create a new NFT.
+                &nbsp;{fee} xDai are charged to create a new NFT.
               </>
             ) : (
               <Skeleton width={330} height={22} />

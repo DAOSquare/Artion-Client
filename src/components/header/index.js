@@ -327,10 +327,10 @@ const Header = ({ border }) => {
         <img src={iconEdit} className={styles.menuIcon} />
         Register Existing Collection
       </div>
-      <div className={styles.menuItem} onClick={openWrapStation}>
+      {/* <div className={styles.menuItem} onClick={openWrapStation}>
         <img src={iconSwap} className={styles.menuIcon} />
         FTM / WFTM Station
-      </div>
+      </div> */}
 
       <div className={styles.menuSeparator} />
       {account?.toLowerCase() === ADMIN_ADDRESS.toLowerCase()
