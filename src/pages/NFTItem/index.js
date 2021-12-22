@@ -105,9 +105,7 @@ const ONE_MONTH = ONE_DAY * 30;
 
 const filters = ['Trade History', 'Transfer History'];
 
-// eslint-disable-next-line no-undef
-const ENV = process.env.REACT_APP_ENV;
-const CHAIN = ENV === 'MAINNET' ? ChainId.FANTOM : ChainId.FANTOM_TESTNET;
+const CHAIN = ChainId.XDAI;
 
 const NFTItem = () => {
   const dispatch = useDispatch();
@@ -290,12 +288,7 @@ const NFTItem = () => {
   const prevAuthToken = usePrevious(authToken);
 
   const isLoggedIn = () => {
-    return (
-      account &&
-      (ENV === 'MAINNET'
-        ? chainId === ChainId.FANTOM
-        : chainId === ChainId.FANTOM_TESTNET)
-    );
+    return account && chainId === ChainId.XDAI;
   };
 
   useEffect(() => {
@@ -1677,7 +1670,7 @@ const NFTItem = () => {
       let addr;
       try {
         const signer = await getSigner();
-        const msg = `Approve Signature on Artion.io with nonce ${nonce}`;
+        const msg = `Approve Signature on NFTSquare with nonce ${nonce}`;
         signature = await signer.signMessage(msg);
         addr = ethers.utils.verifyMessage(msg, signature);
       } catch {
@@ -2823,11 +2816,11 @@ const NFTItem = () => {
         </div>
         <div className={styles.panelLine}>
           <div className={styles.panelLabel}>Network</div>
-          <div className={styles.panelValue}>Fantom Opera</div>
+          <div className={styles.panelValue}>xDai</div>
         </div>
         <div className={styles.panelLine}>
           <div className={styles.panelLabel}>Chain ID</div>
-          <div className={styles.panelValue}>250</div>
+          <div className={styles.panelValue}>100</div>
         </div>
       </div>
     </Panel>
