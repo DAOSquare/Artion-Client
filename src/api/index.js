@@ -7,7 +7,7 @@ export const useApi = () => {
   const explorerUrl = 'https://blockscout.com/xdai/mainnet/';
 
   // const apiUrl = 'http://localhost:5001';
-  const apiUrl = 'http://13.231.161.13:5001';
+  const apiUrl = 'https://13.231.161.13:5001';
 
   // eslint-disable-next-line no-undef
   // const apiUrl = process.env.REACT_APP_API_URI;
