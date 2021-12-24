@@ -3734,6 +3734,7 @@ const NFTItem = () => {
         startPrice={
           bundleID ? bundleListing.current?.price || 0 : myListing()?.price || 0
         }
+        paymentToken={myListing()?.paymentToken || ''}
         confirming={listingItem || priceUpdating}
         approveContract={
           bundleID

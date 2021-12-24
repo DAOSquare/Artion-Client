@@ -19,6 +19,7 @@ const SellModal = ({
   onClose,
   onSell,
   startPrice,
+  paymentToken,
   confirming,
   approveContract,
   contractApproving,
@@ -41,7 +42,11 @@ const SellModal = ({
     setPrice(startPrice > 0 ? startPrice.toString() : '');
     setQuantity('1');
     if (visible && tokens?.length) {
-      setSelected([tokens[0]]);
+      if (startPrice > 0 && paymentToken) {
+        setSelected(tokens.filter(i => i.address === paymentToken));
+      } else {
+        setSelected([tokens[0]]);
+      }
     }
   }, [visible]);
 
