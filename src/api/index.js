@@ -7,7 +7,7 @@ export const useApi = () => {
   const explorerUrl = 'https://blockscout.com/xdai/mainnet/';
 
   // const apiUrl = 'http://localhost:5001';
-  const apiUrl = 'http://api.nftsquare.trade:5001';
+  const apiUrl = 'https://api.nftsquare.trade:5001';
 
   // eslint-disable-next-line no-undef
   // const apiUrl = process.env.REACT_APP_API_URI;
