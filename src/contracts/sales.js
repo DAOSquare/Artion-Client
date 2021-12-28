@@ -36,7 +36,7 @@ export const useSalesContract = () => {
     const contract = await getSalesContract();
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 2000000,
+      gasLimit: 200000,
     };
 
     return await contract['buyItem(address,uint256,address,address)'](
@@ -70,7 +70,7 @@ export const useSalesContract = () => {
 
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 2000000,
+      gasLimit: 200000,
     };
 
     return await contract.listItem(
@@ -95,7 +95,7 @@ export const useSalesContract = () => {
 
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 2000000,
+      gasLimit: 200000,
     };
 
     return await contract.updateListing(
@@ -119,7 +119,7 @@ export const useSalesContract = () => {
 
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 2000000,
+      gasLimit: 200000,
     };
 
     return await contract.createOffer(
@@ -146,7 +146,7 @@ export const useSalesContract = () => {
     const contract = await getSalesContract();
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 2000000,
+      gasLimit: 200000,
     };
 
     return await contract.acceptOffer(nftAddress, tokenId, creator, options);
@@ -156,7 +156,7 @@ export const useSalesContract = () => {
     const contract = await getSalesContract();
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 2000000,
+      gasLimit: 200000,
     };
 
     return await contract.registerRoyalty(
