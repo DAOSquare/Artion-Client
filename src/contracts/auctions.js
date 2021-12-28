@@ -44,7 +44,7 @@ export const useAuctionContract = () => {
     const contract = await getAuctionContract();
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 200000,
+      gasLimit: 1000000,
     };
 
     return await contract.cancelAuction(nftAddress, tokenId, options);
@@ -62,7 +62,7 @@ export const useAuctionContract = () => {
     const contract = await getAuctionContract();
     const options = {
       gasPrice: getHigherGWEI(),
-      gasLimit: 200000,
+      gasLimit: 1000000,
     };
 
     return await contract.createAuction(
