@@ -500,9 +500,9 @@ const CollectionCreate = ({ isRegister }) => {
         <br />
         <div style={{ fontSize: '13px' }}>
           Please submit using the owner address of the collection. If you cannot
-          use the owner address, please email us on contact@fantom.foundation
-          with the information below (and proof of collection ownership, such as
-          from the collection's official email address).
+          use the owner address, please email us on nft@daosquare.io with the
+          information below (and proof of collection ownership, such as from the
+          collection's official email address).
         </div>
 
         {!isRegister && (
@@ -647,7 +647,7 @@ const CollectionCreate = ({ isRegister }) => {
             <div className={styles.inputTitle}>
               Royalty *&nbsp;
               <BootstrapTooltip
-                title="Each NFT under this collection exchanged through Artion will have a percentage of sale given to nominated wallet address."
+                title="Each NFT under this collection exchanged through NFTSquare will have a percentage of sale given to nominated wallet address."
                 placement="top"
               >
                 <HelpOutlineIcon />
@@ -674,7 +674,7 @@ const CollectionCreate = ({ isRegister }) => {
             <div className={styles.inputTitle}>
               Fee Recipient *&nbsp;
               <BootstrapTooltip
-                title="The nominated Fantom Opera Network wallet address to receive royalties from each sale in this collection."
+                title="The nominated XDai Network wallet address to receive royalties from each sale in this collection."
                 placement="top"
               >
                 <HelpOutlineIcon />

@@ -57,6 +57,11 @@ export const Categories = [
     icon: iconDomain,
     label: 'Domain Names',
   },
+  {
+    id: 7,
+    icon: iconVirtual,
+    label: 'Investment Card',
+  },
 ];
 
 export const SortByOptions = [

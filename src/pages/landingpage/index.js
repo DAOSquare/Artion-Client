@@ -25,14 +25,13 @@ const cards = [
     icon: card1,
     title: 'Easy Connect',
     description:
-      'Using Metamask or CoinBase Wallet. Just click "Connect Wallet" on the top right to start.',
+      'Using Metamask Wallet. Just click "Connect Wallet" on the top right to start.',
     path: '/',
   },
   {
     icon: card2,
     title: 'Super Fast',
-    description:
-      'Since NFTSquare runs on the XDAI Network, transactions are usually confirmed within 1-2 seconds.',
+    description: 'Transactions are usually confirmed within 1-2 seconds.',
     path: '/',
   },
   {
@@ -47,7 +46,7 @@ const cards = [
     title: 'Zero Platform Fees',
     description:
       'Trade NFTs via auction or direct offer without any fees taken by NFTSquare.',
-    path: '/explore',
+    path: '/',
   },
 ];
 
