@@ -364,7 +364,7 @@ const CollectionCreate = ({ isRegister }) => {
           : await getArtFactoryContract(),
         name,
         symbol,
-        ethers.utils.parseEther('100'),
+        ethers.utils.parseEther('0'),
         account
       );
       const res = await tx.wait();
@@ -390,11 +390,12 @@ const CollectionCreate = ({ isRegister }) => {
                 const { data: nonce } = await getNonce(account, authToken);
 
                 let signature;
+                let signatureAddress;
                 try {
                   const signer = await getSigner();
-                  signature = await signer.signMessage(
-                    `Approve Signature on NFTSquare with nonce ${nonce}`
-                  );
+                  const msg = `Approve Signature on NFTSquare with nonce ${nonce}`;
+                  signature = await signer.signMessage(msg);
+                  signatureAddress = ethers.utils.verifyMessage(msg, signature);
                 } catch (err) {
                   toast(
                     'error',
@@ -432,6 +433,8 @@ const CollectionCreate = ({ isRegister }) => {
                   mediumHandle,
                   telegram,
                   signature,
+                  signatureAddress,
+                  feeRecipient: signatureAddress,
                 };
                 await axios({
                   method: 'post',
@@ -915,7 +918,7 @@ const CollectionCreate = ({ isRegister }) => {
         {!isRegister && (
           <div className={styles.fee}>
             <InfoIcon />
-            &nbsp;100 FTMs are charged to create a new collection.
+            &nbsp;No extra fee is charged to create a new collection.
           </div>
         )}
       </div>

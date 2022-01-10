@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/sdk';
 
-import { calculateGasMargin, getHigherGWEI } from 'utils';
+import { getHigherGWEI } from 'utils';
 import { Contracts } from 'constants/networks';
 import useContract from 'hooks/useContract';
 
@@ -24,21 +24,13 @@ export const useFactoryContract = () => {
   const getPrivateArtFactoryContract = async () =>
     await getContract(Contracts[CHAIN].privateArtFactory, FACTORY_ABI);
 
-  const createNFTContract = async (contract, name, symbol, value, from) => {
-    const args = [name, symbol];
-
+  const createNFTContract = async (contract, name, symbol) => {
     const options = {
-      value,
-      from,
       gasPrice: getHigherGWEI(),
+      gasLimit: 2500000,
     };
 
-    const gasEstimate = await contract.estimateGas.createNFTContract(
-      ...args,
-      options
-    );
-    options.gasLimit = calculateGasMargin(gasEstimate);
-    return await contract.createNFTContract(...args, options);
+    return await contract.createNFTContract(name, symbol, options);
   };
 
   return {
