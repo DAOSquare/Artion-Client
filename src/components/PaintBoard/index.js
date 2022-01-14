@@ -77,12 +77,12 @@ const MULTI_NFT_ABI = [
 
 const PurpleSwitch = withStyles({
   switchBase: {
-    color: '#1969FF',
+    color: '#6822EF',
     '&$checked': {
-      color: '#1969FF',
+      color: '#6822EF',
     },
     '&$checked + $track': {
-      backgroundColor: '#1969FFAA',
+      backgroundColor: '#6822EFAA',
     },
   },
   checked: {},

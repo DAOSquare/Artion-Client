@@ -645,7 +645,7 @@ const AccountDetails = () => {
       return (
         <Suspense
           fallback={
-            <Loader type="Oval" color="#007BFF" height={32} width={32} />
+            <Loader type="Oval" color="#9745F6" height={32} width={32} />
           }
         >
           <SuspenseImg className={styles.mediaInner} src={image} />

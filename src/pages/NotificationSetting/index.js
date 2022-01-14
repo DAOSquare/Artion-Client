@@ -129,7 +129,7 @@ const followerSettings = [
 const CustomCheckbox = withStyles({
   root: {
     '&$checked': {
-      color: '#1969FF',
+      color: '#6822EF',
     },
   },
   checked: {},

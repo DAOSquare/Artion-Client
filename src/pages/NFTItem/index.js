@@ -2395,7 +2395,7 @@ const NFTItem = () => {
           fallback={
             <Loader
               type="Oval"
-              color="#007BFF"
+              color="#9745F6"
               height={32}
               width={32}
               className={styles.loader}
@@ -2669,7 +2669,7 @@ const NFTItem = () => {
         <div className={styles.bundleItemImage}>
           <Suspense
             fallback={
-              <Loader type="Oval" color="#007BFF" height={32} width={32} />
+              <Loader type="Oval" color="#9745F6" height={32} width={32} />
             }
           >
             <SuspenseImg
@@ -2965,7 +2965,7 @@ const NFTItem = () => {
                 {loading ? (
                   <Loader
                     type="Oval"
-                    color="#007BFF"
+                    color="#9745F6"
                     height={32}
                     width={32}
                     className={styles.loader}
@@ -2998,7 +2998,7 @@ const NFTItem = () => {
                             fallback={
                               <Loader
                                 type="Oval"
-                                color="#007BFF"
+                                color="#9745F6"
                                 height={32}
                                 width={32}
                                 className={styles.loader}
@@ -3233,7 +3233,7 @@ const NFTItem = () => {
                               <Line
                                 type="monotone"
                                 dataKey="price"
-                                stroke="#2479FA"
+                                stroke="#4856fd"
                               />
                             </LineChart>
                           </div>
@@ -3663,7 +3663,7 @@ const NFTItem = () => {
                 <div className={styles.panelBody}>
                   {loading ? (
                     <div className={styles.loadingIndicator}>
-                      <ClipLoader color="#007BFF" size={16} />
+                      <ClipLoader color="#9745F6" size={16} />
                     </div>
                   ) : (
                     <div className={styles.itemsList}>
