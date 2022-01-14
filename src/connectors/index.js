@@ -21,6 +21,6 @@ export const injected = new InjectedConnector({
 
 export const walletlink = new WalletLinkConnector({
   url: 'https://rpc.xdaichain.com/',
-  appName: 'NFTSquare',
+  appName: 'NFT4ever',
   appLogoUrl: ARTION_LOGO_URL,
 });

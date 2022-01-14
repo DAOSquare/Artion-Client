@@ -45,7 +45,7 @@ const cards = [
     icon: card4,
     title: 'Zero Platform Fees',
     description:
-      'Trade NFTs via auction or direct offer without any fees taken by NFTSquare.',
+      'Trade NFTs via auction or direct offer without any fees taken by NFT4ever.',
     path: '/',
   },
 ];
@@ -102,9 +102,9 @@ const LandingPage = () => {
           <div className={styles.mainLeft}>
             <div
               className={styles.title}
-            >{`Trade without platform fees on NFTSquare`}</div>
+            >{`Trade without platform fees on NFT4ever`}</div>
             <div className={styles.subtitle}>
-              NFTSquare is an NFT marketplace built on XDAI. Create and trade
+              NFT4ever is an NFT marketplace built on XDAI. Create and trade
               NFTs instantly with low network costs.
             </div>
             <div className={styles.subtitle}>
@@ -145,7 +145,7 @@ const LandingPage = () => {
         </div>
         <div className={styles.about}>
           <div className={styles.aboutInner}>
-            <div className={styles.aboutTitle}>Why NFTSquare</div>
+            <div className={styles.aboutTitle}>Why NFT4ever</div>
             <div className={styles.aboutCards}>
               {cards.map((card, key) =>
                 renderAboutCard(

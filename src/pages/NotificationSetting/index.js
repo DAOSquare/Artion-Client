@@ -17,6 +17,7 @@ import toast from 'utils/toast';
 import styles from './styles.module.scss';
 
 const selfSettings = [
+  /*
   {
     value: 'sBundleBuy',
     title: 'Bundle Purchased',
@@ -37,6 +38,7 @@ const selfSettings = [
     title: 'An offer to you bundle called off',
     description: 'An offer to your bundle is canceled.',
   },
+  */
   {
     value: 'sNftAuctionPrice',
     title: "Your bid's Auction Price update",
@@ -85,6 +87,7 @@ const selfSettings = [
 ];
 
 const followerSettings = [
+  /*
   {
     value: 'fBundleCreation',
     title: 'New bundle creation by follower',
@@ -100,6 +103,7 @@ const followerSettings = [
     title: 'Bundle Price Update by follower',
     description: 'Updated the bundle sale price.',
   },
+  */
   {
     value: 'fNftAuctionPrice',
     title: 'NFT Auction Price update by follower',
@@ -202,7 +206,7 @@ const NotificationSetting = () => {
       try {
         const { data: nonce } = await getNonce(account, authToken);
         const signer = await getSigner();
-        const msg = `Approve Signature on NFTSquare with nonce ${nonce}`;
+        const msg = `Approve Signature on NFT4ever with nonce ${nonce}`;
         signature = await signer.signMessage(msg);
         addr = ethers.utils.verifyMessage(msg, signature);
       } catch (err) {

@@ -26,7 +26,7 @@ import Identicon from 'components/Identicon';
 
 import logoSmallBlue from 'assets/svgs/logo_small_blue.svg';
 import iconUser from 'assets/svgs/user.svg';
-import iconNotification from 'assets/svgs/notification.svg';
+// import iconNotification from 'assets/svgs/notification.svg';
 import iconAdd from 'assets/svgs/add.svg';
 import iconEdit from 'assets/svgs/edit.svg';
 // import iconSwap from 'assets/svgs/swap.svg';
@@ -224,10 +224,10 @@ const Header = ({ border }) => {
     handleMenuClose();
   };
 
-  const goToNotificationSettings = () => {
-    history.push(`/settings/notification`);
-    handleMenuClose();
-  };
+  // const goToNotificationSettings = () => {
+  //   history.push(`/settings/notification`);
+  //   handleMenuClose();
+  // };
 
   const handleCreateCollection = () => {
     history.push('/collection/create');
@@ -315,10 +315,10 @@ const Header = ({ border }) => {
           My Profile
         </div>
       )}
-      <div className={styles.menuItem} onClick={goToNotificationSettings}>
+      {/* <div className={styles.menuItem} onClick={goToNotificationSettings}>
         <img src={iconNotification} className={styles.menuIcon} />
         Notification Settings
-      </div>
+      </div> */}
       <div className={styles.menuItem} onClick={handleCreateCollection}>
         <img src={iconAdd} className={styles.menuIcon} />
         Create New Collection

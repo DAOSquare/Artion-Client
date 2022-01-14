@@ -276,7 +276,7 @@ const CollectionCreate = ({ isRegister }) => {
 
           try {
             const signer = await getSigner();
-            const msg = `Approve Signature on NFTSquare with nonce ${nonce}`;
+            const msg = `Approve Signature on NFT4ever with nonce ${nonce}`;
 
             signature = await signer.signMessage(msg);
             signatureAddress = ethers.utils.verifyMessage(msg, signature);
@@ -393,7 +393,7 @@ const CollectionCreate = ({ isRegister }) => {
                 let signatureAddress;
                 try {
                   const signer = await getSigner();
-                  const msg = `Approve Signature on NFTSquare with nonce ${nonce}`;
+                  const msg = `Approve Signature on NFT4ever with nonce ${nonce}`;
                   signature = await signer.signMessage(msg);
                   signatureAddress = ethers.utils.verifyMessage(msg, signature);
                 } catch (err) {
@@ -650,7 +650,7 @@ const CollectionCreate = ({ isRegister }) => {
             <div className={styles.inputTitle}>
               Royalty *&nbsp;
               <BootstrapTooltip
-                title="Each NFT under this collection exchanged through NFTSquare will have a percentage of sale given to nominated wallet address."
+                title="Each NFT under this collection exchanged through NFT4ever will have a percentage of sale given to nominated wallet address."
                 placement="top"
               >
                 <HelpOutlineIcon />
@@ -714,7 +714,7 @@ const CollectionCreate = ({ isRegister }) => {
                 control={<CustomRadio color="primary" />}
                 label="Single Token Standard"
               />
-              <FormControlLabel
+              {/* <FormControlLabel
                 classes={{
                   root: cx(styles.option, !isSingle && styles.active),
                   label: styles.optionLabel,
@@ -722,7 +722,7 @@ const CollectionCreate = ({ isRegister }) => {
                 value="false"
                 control={<CustomRadio color="primary" />}
                 label="Multi Token Standard"
-              />
+              /> */}
             </RadioGroup>
           </div>
         )}
@@ -730,9 +730,9 @@ const CollectionCreate = ({ isRegister }) => {
         <div className={styles.inputGroup}>
           <div className={styles.inputTitle}>Category</div>
           <div className={styles.inputSubTitle}>
-            Adding a category will help make your item discoverable on Fantom.
+            Adding a category will help make your item discoverable on NFT4ever.
           </div>
-          <div className={styles.inputSubTitle}>
+          {/* <div className={styles.inputSubTitle}>
             For more information, read{' '}
             <a
               href="https://docs.fantom.foundation/tutorials/collection-and-bundle-guide-on-artion"
@@ -741,7 +741,7 @@ const CollectionCreate = ({ isRegister }) => {
             >
               this
             </a>
-          </div>
+          </div> */}
           <div className={cx(styles.inputWrapper, styles.categoryList)}>
             <div
               className={cx(

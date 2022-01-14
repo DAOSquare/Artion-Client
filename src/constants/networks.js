@@ -45,9 +45,9 @@ export const Contracts = {
     auction: '0x551c75975DD2eFC53008E57769aF8Be0850faf5C',
     sales: '0x3eEDfB9445886f6260ECbf5fe3480fE4f2F15beC', // marketplace
     bundleSales: '0x8C5d6E5489A017e81f33dc15d58ACbAe0aAb97F9',
-    factory: '0xAa0A501E6f1233A0a69De9aF91f04eF42F3abba3', //NFTFactory
-    privateFactory: '0x42395763A088091E1eC1909049d3f52957feA38A', //NFTFactoryPrivate
-    artFactory: '0x363FEc9616a55C913e209C2e2ff868E5278D229d', //ArtFactory
-    privateArtFactory: '0x23bc98E5CBF5ec1e957536A77269EDEd1D56b4C9', //ArtFactoryPrivate
+    factory: '0xce761938c71823Ca848b722B3c0979c95A3f82e5', //NFTFactory   0xAa0A501E6f1233A0a69De9aF91f04eF42F3abba3
+    privateFactory: '0x4f7bBccF440673BB36BbffB63a8de9bDFd52C568', //NFTFactoryPrivate
+    artFactory: '0x3179f69C801e4f570870De63b68DCFc42E574Eb8', //ArtFactory
+    privateArtFactory: '0x25D10d16a1e9aeFbfd375CF2a570dA1857C2C8B2', //ArtFactoryPrivate
   },
 };
