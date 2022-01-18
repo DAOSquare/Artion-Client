@@ -21,7 +21,7 @@ import { Categories } from 'constants/filter.constants';
 import HeaderActions from 'actions/header.actions';
 import Header from 'components/header';
 import BootstrapTooltip from 'components/BootstrapTooltip';
-import PriceInput from 'components/PriceInput';
+// import PriceInput from 'components/PriceInput';
 import toast from 'utils/toast';
 import { useApi } from 'api';
 import { useFactoryContract, getSigner } from 'contracts';
@@ -38,7 +38,7 @@ import plusIcon from 'assets/svgs/plus.svg';
 import closeIcon from 'assets/svgs/close.svg';
 
 import styles from './styles.module.scss';
-import { formatError, isAddress } from 'utils';
+import { formatError } from 'utils';
 
 const CustomRadio = withStyles({
   root: {
@@ -78,9 +78,9 @@ const CollectionCreate = ({ isRegister }) => {
   const [symbolError, setSymbolError] = useState(null);
   const [description, setDescription] = useState('');
   const [descriptionError, setDescriptionError] = useState(null);
-  const [royalty, setRoyalty] = useState('');
-  const [feeRecipient, setFeeRecipient] = useState('');
-  const [recipientError, setRecipientError] = useState(null);
+  // const [royalty, setRoyalty] = useState('');
+  // const [feeRecipient, setFeeRecipient] = useState('');
+  // const [recipientError, setRecipientError] = useState(null);
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState(null);
   const [address, setAddress] = useState('');
@@ -171,15 +171,15 @@ const CollectionCreate = ({ isRegister }) => {
     }
   };
 
-  const validateFeeRecipient = () => {
-    if (feeRecipient.length === 0) {
-      setRecipientError("This field can't be blank");
-    } else if (!isAddress(feeRecipient)) {
-      setRecipientError('Invalid address');
-    } else {
-      setRecipientError(null);
-    }
-  };
+  // const validateFeeRecipient = () => {
+  //   if (feeRecipient.length === 0) {
+  //     setRecipientError("This field can't be blank");
+  //   } else if (!isAddress(feeRecipient)) {
+  //     setRecipientError('Invalid address');
+  //   } else {
+  //     setRecipientError(null);
+  //   }
+  // };
 
   const validEmail = email => /(.+)@(.+){2,}\.(.+){2,}/.test(email);
 
@@ -225,13 +225,13 @@ const CollectionCreate = ({ isRegister }) => {
   const isValid = (() => {
     if (!logo) return false;
     if (nameError) return false;
-    if (descriptionError) return false;
+    if (descriptionError || !description) return false;
     if (addressError) return false;
     if (!isRegister && (symbol.length === 0 || symbol.includes(' ')))
       return false;
     if (email.length === 0) return false;
     if (!validEmail(email)) return false;
-    if (isRegister && !isAddress(feeRecipient)) return false;
+    // if (isRegister && !isAddress(feeRecipient)) return false;
     return true;
   })();
 
@@ -319,8 +319,8 @@ const CollectionCreate = ({ isRegister }) => {
             telegram,
             signature,
             signatureAddress,
-            royalty,
-            feeRecipient,
+            // royalty,
+            // feeRecipient,
           };
 
           await axios({
@@ -645,7 +645,7 @@ const CollectionCreate = ({ isRegister }) => {
           </div>
         </div>
 
-        {isRegister && (
+        {/* {isRegister && (
           <div className={styles.inputGroup}>
             <div className={styles.inputTitle}>
               Royalty *&nbsp;
@@ -670,9 +670,9 @@ const CollectionCreate = ({ isRegister }) => {
               />
             </div>
           </div>
-        )}
+        )} */}
 
-        {isRegister && (
+        {/* {isRegister && (
           <div className={styles.inputGroup}>
             <div className={styles.inputTitle}>
               Fee Recipient *&nbsp;
@@ -696,7 +696,7 @@ const CollectionCreate = ({ isRegister }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
 
         {!isRegister && (
           <div className={styles.inputGroup}>
