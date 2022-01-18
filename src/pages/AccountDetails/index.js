@@ -38,6 +38,8 @@ import IconList from 'assets/icons/iconList';
 // import IconBundle from 'assets/icons/iconBundle';
 import IconHeart from 'assets/icons/iconHeart';
 import IconClock from 'assets/icons/iconClock';
+import IconDKP from 'assets/icons/iconDKP';
+import { getOwnedCards } from 'api/dkp';
 
 import styles from './styles.module.scss';
 
@@ -82,10 +84,12 @@ const AccountDetails = () => {
   const [bundleModalVisible, setBundleModalVisible] = useState(false);
   const [followingsModalVisible, setFollowingsModalVisible] = useState(false);
   const [followersModalVisible, setFollowersModalVisible] = useState(false);
+  const [dkpFetching, setDKPFetching] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [bundleFetching, setBundleFetching] = useState(false);
   const [favFetching, setFavFetching] = useState(false);
   const [fguresFetching, setFiguresFetching] = useState(false);
+  const dkpItems = useRef([]);
   const tokens = useRef([]);
   const bundles = useRef([]);
   const likes = useRef([]);
@@ -114,10 +118,20 @@ const AccountDetails = () => {
   const [fetchInterval, setFetchInterval] = useState(null);
   const [likeCancelSource, setLikeCancelSource] = useState(null);
   const [prevNumPerRow, setPrevNumPerRow] = useState(null);
+  const [dkpCount, setDKPCount] = useState(0);
   const prevAuthToken = usePrevious(authToken);
 
   const numPerRow = Math.floor(width / 240);
   const fetchCount = numPerRow <= 3 ? 18 : numPerRow === 4 ? 16 : numPerRow * 3;
+
+  const fetchDKP = async _account => {
+    setDKPFetching(true);
+    let cards = await getOwnedCards(_account);
+    console.log(',,,,cards,', cards);
+    setDKPCount(cards.length);
+    dkpItems.current = cards;
+    setDKPFetching(false);
+  };
 
   const getUserDetails = async _account => {
     setLoading(true);
@@ -241,6 +255,7 @@ const AccountDetails = () => {
 
     if (prevUID !== uid) {
       setPrevUID(uid);
+      fetchDKP(uid);
       getUserDetails(uid);
       getFigures(uid);
       setTab(0);
@@ -823,6 +838,7 @@ const AccountDetails = () => {
               favCount,
               favFetching || fguresFetching
             )}
+            {renderTab('DKP', IconDKP, 9, dkpCount, dkpFetching)}
           </div>
           <div className={styles.tabsGroup}>
             <div className={styles.groupTitle}>Account</div>
@@ -1050,6 +1066,13 @@ const AccountDetails = () => {
                 ))}
               </div>
             </>
+          ) : tab === 9 ? (
+            <NFTsGrid
+              isDKP
+              items={dkpItems.current}
+              numPerRow={numPerRow}
+              loading={dkpFetching}
+            />
           ) : (
             <>
               <div className={styles.activityHeader}>

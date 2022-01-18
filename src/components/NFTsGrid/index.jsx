@@ -1,7 +1,8 @@
 import React from 'react';
 import cx from 'classnames';
 
-import Card from '../NFTCard';
+import NFTCard from '../NFTCard';
+import DKPCard from '../DKPCard';
 
 import styles from './styles.module.scss';
 import { Categories } from '../../constants/filter.constants';
@@ -17,7 +18,9 @@ const NFTsGrid = ({
   category,
   onCreate = () => {},
   onLike = () => {},
+  isDKP,
 }) => {
+  const Card = isDKP ? DKPCard : NFTCard;
   const dispatch = useDispatch();
   const n = numPerRow || 6;
   const className = cx(styles.nft, styles[`num${n}`]);
