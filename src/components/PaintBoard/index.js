@@ -277,6 +277,7 @@ const PaintBoard = () => {
     formData.append('description', description);
     formData.append('symbol', symbol);
     formData.append('xtra', xtra);
+    formData.append('collection', selected[0].collectionName);
     const _royalty = parseInt(royalty) * 100;
     formData.append('royalty', isNaN(_royalty) ? 0 : _royalty);
     try {

@@ -24,43 +24,43 @@ export const GroupFilters = [
 export const Categories = [
   {
     id: 0,
+    icon: iconVirtual,
+    label: 'Investment Card',
+  },
+  {
+    id: 1,
     icon: iconArt,
     label: 'Art',
   },
   {
-    id: 1,
+    id: 2,
+    icon: iconDomain,
+    label: 'Design',
+  },
+  {
+    id: 3,
     icon: iconCollectibles,
     label: 'Collectibles',
   },
   {
-    id: 2,
+    id: 4,
     icon: iconSports,
     label: 'Sports',
   },
   {
-    id: 3,
-    icon: iconUtility,
-    label: 'Utility',
-  },
-  {
-    id: 4,
+    id: 5,
     icon: iconTrading,
     label: 'Trading Cards',
   },
   {
-    id: 5,
-    icon: iconVirtual,
-    label: 'Virtual Worlds',
-  },
-  {
     id: 6,
-    icon: iconDomain,
-    label: 'Domain Names',
+    icon: iconUtility,
+    label: 'Utility',
   },
   {
     id: 7,
     icon: iconVirtual,
-    label: 'Investment Card',
+    label: 'Virtual Worlds',
   },
 ];
 

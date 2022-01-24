@@ -17,35 +17,39 @@ import card2 from 'assets/svgs/card2.svg';
 import card3 from 'assets/svgs/card3.svg';
 import card4 from 'assets/svgs/card4.svg';
 import search from 'assets/svgs/magnifier.svg';
+import twitter from 'assets/svgs/twitter_white.svg';
+import discord from 'assets/svgs/discord_white.svg';
+import telegram from 'assets/svgs/telegram_white.svg';
 
 import styles from './styles.module.scss';
 
 const cards = [
   {
     icon: card1,
-    title: 'Easy Connect',
+    title: 'DAOSquare Incubator',
     description:
-      'Using Metamask Wallet. Just click "Connect Wallet" on the top right to start.',
+      'Using NFT4ever to verify and circulate the rights in DAOSquare Incubator.',
     path: '/',
   },
   {
     icon: card2,
-    title: 'Super Fast',
-    description: 'Transactions are usually confirmed within 1-2 seconds.',
+    title: 'Multi-Chain support',
+    description:
+      'NFT4ever will deployed on Ethereum, GnosisChian, Polygon, Fantom, and more.',
     path: '/',
   },
   {
     icon: card3,
-    title: 'Low Transaction Fees',
+    title: 'Application friendly',
     description:
-      'Transactions are usually just a few cents, allowing users to create and trade many NFTs without prohibitively high network fees.',
+      'Supporting those innovative applications helps them run NFT better. just like MuseX.',
     path: '/',
   },
   {
     icon: card4,
     title: 'Zero Platform Fees',
     description:
-      'Trade NFTs via auction or direct offer without any fees taken by NFT4ever.',
+      'Trade NFTs via auction or direct offer without any fees by NFT4ever.',
     path: '/',
   },
 ];
@@ -100,12 +104,11 @@ const LandingPage = () => {
       <div className={styles.body}>
         <div className={styles.main}>
           <div className={styles.mainLeft}>
-            <div
-              className={styles.title}
-            >{`Trade without platform fees on NFT4ever`}</div>
+            <div className={styles.title}>The Value of Circulation</div>
             <div className={styles.subtitle}>
-              NFT4ever is an NFT marketplace built on XDAI. Create and trade
-              NFTs instantly with low network costs.
+              NFT4ever is part of DAOSquare Incubator. It enable the circulation
+              of rights from DAOSquare Incubator. Also, NFT4ever is an open
+              marketplace, trade NFT without platform fees.
             </div>
             <div className={styles.subtitle}>
               <strong>
@@ -167,31 +170,60 @@ const LandingPage = () => {
           </div>
         </div>
         <div className={styles.footer}>
-          <img src={logo} alt="logo" className={styles.logo} />
-          <a
-            style={{ textDecoration: 'none', color: '#FFFFFF' }}
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://app.termly.io/document/privacy-policy/7db4b9fc-aa5d-4f80-bfa1-27120ff982ba"
-          >
-            Privacy Policy
-          </a>
-          <a
-            style={{ textDecoration: 'none', color: '#FFFFFF' }}
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://app.termly.io/document/cookie-policy/c79f1a78-08a2-4da2-85f0-846a461cde81"
-          >
-            Cookie Policy
-          </a>
-          <a
-            style={{ textDecoration: 'none', color: '#FFFFFF' }}
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://app.termly.io/document/terms-of-use-for-online-marketplace/1f69b33f-65ba-40d9-bf63-b28e357f7c34"
-          >
-            Terms of Service
-          </a>
+          <img
+            src={logo}
+            alt="logo"
+            className={styles.logo}
+            style={{ marginTop: '20px' }}
+          />
+          <div style={{ marginTop: '20px' }}>
+            <div
+              style={{
+                textDecoration: 'none',
+                color: '#FFFFFF',
+                fontSize: '0.8rem',
+                marginBottom: '12px',
+              }}
+            >
+              NFT4EVER is developed under the GPLv3 License, with the
+              contribution of Artion.
+            </div>
+            <div>
+              <a
+                style={{
+                  textDecoration: 'none',
+                  color: '#FFFFFF',
+                  marginRight: '12px',
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://app.termly.io/document/privacy-policy/7db4b9fc-aa5d-4f80-bfa1-27120ff982ba"
+              >
+                Privacy Policy
+              </a>
+              <a
+                style={{
+                  textDecoration: 'none',
+                  color: '#FFFFFF',
+                  marginRight: '12px',
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://app.termly.io/document/cookie-policy/c79f1a78-08a2-4da2-85f0-846a461cde81"
+              >
+                Cookie Policy
+              </a>
+              <a
+                style={{ textDecoration: 'none', color: '#FFFFFF' }}
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://app.termly.io/document/terms-of-use-for-online-marketplace/1f69b33f-65ba-40d9-bf63-b28e357f7c34"
+              >
+                Terms of Service
+              </a>
+            </div>
+          </div>
+
           {/* <a
             href="https://fantom.foundation/"
             target="_blank"
@@ -200,6 +232,35 @@ const LandingPage = () => {
           >
             <img src={fantomLogo} alt="fantom-logo" className={styles.logo} />
           </a> */}
+
+          <div style={{ marginTop: '20px' }}>
+            <div
+              style={{
+                textDecoration: 'none',
+                color: '#FFFFFF',
+                marginBottom: '12px',
+              }}
+            >
+              Join the community
+            </div>
+            <a
+              href="https://twitter.com/DAOSquare"
+              target="__blank"
+              style={{ marginRight: '20px' }}
+            >
+              <img src={twitter} />
+            </a>
+            <a
+              href="https://discord.com/invite/JngTE8xMgX"
+              target="__blank"
+              style={{ marginRight: '20px' }}
+            >
+              <img src={discord} />
+            </a>
+            <a href="https://t.me/DAOSquareOfficial" target="__blank">
+              <img src={telegram} />
+            </a>
+          </div>
         </div>
       </div>
     </div>

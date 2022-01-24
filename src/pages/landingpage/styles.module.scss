@@ -301,12 +301,13 @@
   margin-top: 80px;
   width: 100%;
   height: 144px;
-  padding: 0 80px;
+  padding: 0 80px 20px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #6822ef;
+  text-align: center;
 }
 
 .logo {
@@ -367,8 +368,10 @@
   }
 
   .footer {
-    height: 128px;
-    padding: 0 32px;
+    margin-top: 0;
+    padding: 24px;
+    height: auto;
+    display: block;
   }
 }
 
@@ -470,9 +473,5 @@
   .categoryCard {
     flex-basis: 100%;
     margin-right: 0 !important;
-  }
-
-  .footer {
-    margin-top: 0;
   }
 }
