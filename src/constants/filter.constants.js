@@ -1,10 +1,11 @@
-import iconArt from 'assets/svgs/rainbow.svg';
-import iconCollectibles from 'assets/svgs/bear.svg';
-import iconSports from 'assets/svgs/soccerball.svg';
-import iconUtility from 'assets/svgs/tools.svg';
-import iconTrading from 'assets/svgs/cardboard.svg';
-import iconVirtual from 'assets/svgs/monster.svg';
-import iconDomain from 'assets/svgs/domain.svg';
+import iconArt from 'assets/svgs/art.svg';
+import iconCollectibles from 'assets/svgs/collectibles.svg';
+import iconSports from 'assets/svgs/sport.svg';
+import iconUtility from 'assets/svgs/utility.svg';
+import iconTrading from 'assets/svgs/trading.svg';
+import iconVirtual from 'assets/svgs/virtual.svg';
+import iconInvestment from 'assets/svgs/investment.svg';
+import iconDesign from 'assets/svgs/design.svg';
 
 export const GroupFilters = [
   {
@@ -24,7 +25,7 @@ export const GroupFilters = [
 export const Categories = [
   {
     id: 0,
-    icon: iconVirtual,
+    icon: iconInvestment,
     label: 'Investment Card',
   },
   {
@@ -34,7 +35,7 @@ export const Categories = [
   },
   {
     id: 2,
-    icon: iconDomain,
+    icon: iconDesign,
     label: 'Design',
   },
   {
