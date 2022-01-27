@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { NavLink, useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import { Categories } from 'constants/filter.constants';
 import HeaderActions from 'actions/header.actions';
@@ -91,9 +90,6 @@ const LandingPage = () => {
       </div>
       <div className={cx(styles.cardLabelWrapper, extra && styles.extraCard)}>
         <div className={styles.cardLabel}>{label}</div>
-        <div className={styles.browseBtn}>
-          <ChevronRightIcon className={styles.browseBtnIcon} />
-        </div>
       </div>
     </div>
   );
