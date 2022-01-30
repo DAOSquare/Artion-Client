@@ -486,7 +486,7 @@ const CollectionCreate = ({ isRegister }) => {
           className={styles.category}
           onClick={() => selectCategory(cat.id)}
         >
-          <img src={cat.icon} />
+          <img src={cat.icon} width="40px" />
           <span className={styles.categoryLabel}>{cat.label}</span>
         </MenuItem>
       ))}
